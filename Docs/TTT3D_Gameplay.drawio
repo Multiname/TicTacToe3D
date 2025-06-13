@@ -1,0 +1,167 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/27.0.9 Chrome/134.0.6998.205 Electron/35.4.0 Safari/537.36" version="27.0.9">
+  <diagram name="Page-1" id="e7e014a7-5840-1c2e-5031-d8a46d1fe8dd">
+    <mxGraphModel dx="815" dy="505" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-61" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=gost;fontStyle=2;curved=0;jumpStyle=arc;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-41" target="cmzqVZvCuwinUGVuyVIK-51" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-41" value="" style="shape=ellipse;html=1;fillColor=strokeColor;strokeWidth=2;verticalLabelPosition=bottom;verticalAlignment=top;perimeter=ellipsePerimeter;" parent="1" vertex="1">
+          <mxGeometry x="120" y="40" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-62" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-51" target="cmzqVZvCuwinUGVuyVIK-53" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-51" value="Указывается кол-во очков для победы" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=gost;fontStyle=2" parent="1" vertex="1">
+          <mxGeometry x="80" y="120" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-63" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-53" target="cmzqVZvCuwinUGVuyVIK-57" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-53" value="Игрок начинает игру, &quot;круг&quot; ходит первым" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=gost;fontStyle=2" parent="1" vertex="1">
+          <mxGeometry x="80" y="220" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-77" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-54" target="cmzqVZvCuwinUGVuyVIK-57" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="520" />
+              <mxPoint x="40" y="520" />
+              <mxPoint x="40" y="300" />
+              <mxPoint x="140" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-54" value="Вращение камеры" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=gost;fontStyle=2" parent="1" vertex="1">
+          <mxGeometry x="80" y="400" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-78" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-55" target="cmzqVZvCuwinUGVuyVIK-57" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="520" />
+              <mxPoint x="40" y="520" />
+              <mxPoint x="40" y="300" />
+              <mxPoint x="140" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-55" value="Перемещение камеры вверх-вниз" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=gost;fontStyle=2" parent="1" vertex="1">
+          <mxGeometry x="240" y="400" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-68" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-56" target="cmzqVZvCuwinUGVuyVIK-67" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-56" value="Размещение фигуры" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=gost;fontStyle=2" parent="1" vertex="1">
+          <mxGeometry x="400" y="400" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-64" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-57" target="cmzqVZvCuwinUGVuyVIK-54" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-65" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-57" target="cmzqVZvCuwinUGVuyVIK-55" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-66" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-57" target="cmzqVZvCuwinUGVuyVIK-56" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-57" value="" style="shape=rhombus;html=1;verticalLabelPosition=bottom;verticalAlignment=top;" parent="1" vertex="1">
+          <mxGeometry x="120" y="320" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-84" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-67" target="cmzqVZvCuwinUGVuyVIK-83" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-67" value="" style="shape=rhombus;html=1;verticalLabelPosition=bottom;verticalAlignment=top;" parent="1" vertex="1">
+          <mxGeometry x="440" y="500" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-73" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-69" target="cmzqVZvCuwinUGVuyVIK-72" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-69" value="Все фигуры во всех линиях уничтожаются" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=gost;fontStyle=2" parent="1" vertex="1">
+          <mxGeometry x="400" y="580" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-75" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-72" target="cmzqVZvCuwinUGVuyVIK-74" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-72" value="Игроки получают по 1 очку за каждую свою уничтоженную фигуру" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=gost;fontStyle=2;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="400" y="680" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-76" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=default;align=center;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-74" target="cmzqVZvCuwinUGVuyVIK-67" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="810" />
+              <mxPoint x="360" y="480" />
+              <mxPoint x="460" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-74" value="Фигуры, расположенные над уничтоженными фигурами, падают вниз" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=gost;fontStyle=2;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="400" y="780" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-70" value="В линии, 2D- или 3D-диагонали&lt;div&gt;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;есть фигуры одного типа&lt;/span&gt;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=left;verticalAlign=middle;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;labelPosition=right;verticalLabelPosition=middle;spacing=6;spacingTop=-10;" parent="1" source="cmzqVZvCuwinUGVuyVIK-67" target="cmzqVZvCuwinUGVuyVIK-69" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-89" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=right;verticalAlign=middle;spacingTop=-10;spacing=6;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-79" target="cmzqVZvCuwinUGVuyVIK-57" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="620" y="300" />
+              <mxPoint x="140" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-79" value="Ход передается следующему игроку" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=gost;fontStyle=2" parent="1" vertex="1">
+          <mxGeometry x="560" y="400" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-87" value="Кол-во очков&lt;div&gt;изменилось&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=left;verticalAlign=middle;spacingTop=-10;spacing=6;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;labelPosition=right;verticalLabelPosition=middle;" parent="1" source="cmzqVZvCuwinUGVuyVIK-83" target="cmzqVZvCuwinUGVuyVIK-86" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-88" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=right;verticalAlign=middle;spacingTop=-10;spacing=6;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-83" target="cmzqVZvCuwinUGVuyVIK-79" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-83" value="" style="shape=rhombus;html=1;verticalLabelPosition=bottom;verticalAlignment=top;" parent="1" vertex="1">
+          <mxGeometry x="600" y="500" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-92" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=right;verticalAlign=middle;spacingTop=-10;spacing=6;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-86" target="cmzqVZvCuwinUGVuyVIK-79" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="720" y="600" />
+              <mxPoint x="720" y="430" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-95" value="Оба игрока набрали&lt;div&gt;нужное число очков&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=left;verticalAlign=bottom;spacingTop=-10;spacing=6;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;labelPosition=right;verticalLabelPosition=top;" parent="1" source="cmzqVZvCuwinUGVuyVIK-86" target="cmzqVZvCuwinUGVuyVIK-94" edge="1">
+          <mxGeometry x="0.2" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="620" y="790" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-96" value="1 игрок набрал&lt;div&gt;нужное число очков&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=left;verticalAlign=bottom;spacingTop=-10;spacing=6;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;labelPosition=right;verticalLabelPosition=top;" parent="1" source="cmzqVZvCuwinUGVuyVIK-86" target="cmzqVZvCuwinUGVuyVIK-90" edge="1">
+          <mxGeometry x="-0.2" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="620" y="690" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-86" value="" style="shape=rhombus;html=1;verticalLabelPosition=bottom;verticalAlignment=top;" parent="1" vertex="1">
+          <mxGeometry x="600" y="580" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-100" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=right;verticalAlign=middle;spacingTop=-10;spacing=6;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-90" target="cmzqVZvCuwinUGVuyVIK-97" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-90" value="Объявляется победитель" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=gost;fontStyle=2" parent="1" vertex="1">
+          <mxGeometry x="750" y="660" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-101" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=0;rounded=1;jumpStyle=arc;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=right;verticalAlign=middle;spacingTop=-10;spacing=6;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;endArrow=classic;endFill=1;" parent="1" source="cmzqVZvCuwinUGVuyVIK-94" target="cmzqVZvCuwinUGVuyVIK-97" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-94" value="Объявляется ничья" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=gost;fontStyle=2" parent="1" vertex="1">
+          <mxGeometry x="750" y="760" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cmzqVZvCuwinUGVuyVIK-97" value="" style="html=1;shape=mxgraph.sysml.actFinal;strokeWidth=2;verticalLabelPosition=bottom;verticalAlignment=top;fontFamily=gost;fontSize=11;fontColor=default;fontStyle=2;labelBackgroundColor=default;" parent="1" vertex="1">
+          <mxGeometry x="920" y="720" width="40" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
