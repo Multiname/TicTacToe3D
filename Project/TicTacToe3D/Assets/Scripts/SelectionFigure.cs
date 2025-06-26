@@ -3,6 +3,7 @@ using UnityEngine;
 public class SelectionFigure : MonoBehaviour {
     [SerializeField] Board board;
 
+    [SerializeField] GameObject body;
     [SerializeField] GameObject sphereForm;
     [SerializeField] GameObject crossForm;
 
@@ -17,16 +18,16 @@ public class SelectionFigure : MonoBehaviour {
 
     private FigureSide attachedFigureSide = null;
 
-    public void MoveSelectionFigure(FigureSide figureSide, Vector3Int figureSideCoordinates, Vector3Int figureSideDirection) {
-        gameObject.SetActive(true);
+    public void MoveSelectionFigure(FigureSide figureSide, Coordinates figureSideCoordinates, Vector3Int figureSideDirection) {
+        body.SetActive(true);
         attachedFigureSide = figureSide;
-        Coordinates = figureSideCoordinates + figureSideDirection;
+        Coordinates = figureSideCoordinates.coordinates + figureSideDirection;
     }
 
     public void Detach(FigureSide figureSide) {
         if (attachedFigureSide == figureSide) {
             attachedFigureSide = null;
-            gameObject.SetActive(false);
+            body.SetActive(false);
         }
     }
 

@@ -17,14 +17,16 @@ public class FigureSide : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         new(0, 0, -1)
     };
 
-    [SerializeField] SelectionFigure selectionFigure;
+    private SelectionFigure selectionFigure;
 
-    [SerializeField] Vector3Int coordinates = new();
+    [SerializeField] Coordinates coordinates;
     [SerializeField] FigureSideType type = FigureSideType.Y_PLUS;
     private Vector3Int direction = new();
 
     private void Start() {
         direction = directions[(int)type];
+
+        selectionFigure = GameObject.FindWithTag("SelectionFigure").GetComponent<SelectionFigure>();
     }
 
     public void OnPointerEnter(PointerEventData eventData) {

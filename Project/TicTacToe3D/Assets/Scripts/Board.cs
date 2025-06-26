@@ -11,6 +11,7 @@ public class Board : MonoBehaviour {
     public void PlaceFigure(Vector3Int coordinates) {
         Figure figure = Instantiate(figurePrefabs[(int)gameManager.CurrentPlayer], coordinates, Quaternion.identity);
         placedFigures[coordinates.x, coordinates.z, coordinates.y] = figure;
+        figure.GetComponent<Coordinates>().coordinates = coordinates;
 
         gameManager.StartNextTurn();
         selectionFigure.SwitchForm();
