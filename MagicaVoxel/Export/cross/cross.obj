@@ -4,7 +4,7 @@
 o 
 
 # material
-mtllib x.mtl
+mtllib cross.mtl
 usemtl palette
 
 # normals

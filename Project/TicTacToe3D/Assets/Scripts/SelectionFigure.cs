@@ -1,18 +1,23 @@
 using UnityEngine;
 
 public class SelectionFigure : MonoBehaviour {
-    private Vector3 coordinates = new();
-    public Vector3 Coordinates {
-        get => coordinates;
+    [SerializeField] Board board;
+
+    [SerializeField] GameObject sphereForm;
+    [SerializeField] GameObject crossForm;
+
+    private Vector3Int _coordinates = new();
+    private Vector3Int Coordinates {
+        get => _coordinates;
         set {
-            coordinates = value;
+            _coordinates = value;
             transform.position = value;
         }
     }
 
     private FigureSide attachedFigureSide = null;
 
-    public void MoveSelectionFigure(FigureSide figureSide, Vector3 figureSideCoordinates, Vector3 figureSideDirection) {
+    public void MoveSelectionFigure(FigureSide figureSide, Vector3Int figureSideCoordinates, Vector3Int figureSideDirection) {
         gameObject.SetActive(true);
         attachedFigureSide = figureSide;
         Coordinates = figureSideCoordinates + figureSideDirection;
@@ -23,5 +28,14 @@ public class SelectionFigure : MonoBehaviour {
             attachedFigureSide = null;
             gameObject.SetActive(false);
         }
+    }
+
+    public void ConfirmSelection() {
+        board.PlaceFigure(Coordinates);
+    }
+
+    public void SwitchForm() {
+        sphereForm.SetActive(!sphereForm.activeSelf);
+        crossForm.SetActive(!crossForm.activeSelf);
     }
 }
