@@ -37,6 +37,10 @@ public class FigureSide : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         selectionFigure.Detach(this);
     }
 
+    private void OnDisable() {
+        selectionFigure.Detach(this);
+    } 
+
     public void OnPointerClick(PointerEventData eventData) {
         selectionFigure.ConfirmSelection();
     }
