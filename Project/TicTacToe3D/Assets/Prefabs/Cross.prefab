@@ -525,6 +525,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  idleAnimation: {fileID: 9188657076357058597}
 --- !u!114 &934601294010460873
 MonoBehaviour:
   m_ObjectHideFlags: 0

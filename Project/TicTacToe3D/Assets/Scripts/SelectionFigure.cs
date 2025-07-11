@@ -7,6 +7,21 @@ public class SelectionFigure : MonoBehaviour {
     [SerializeField] GameObject sphereForm;
     [SerializeField] GameObject crossForm;
 
+    private bool _acitve = true;
+    public bool Active {
+        private get => _acitve;
+        set {
+            _acitve = value;
+            if (_acitve) {
+                if (attachedFigureSide != null) {
+                    body.SetActive(true);
+                }
+            } else {
+                body.SetActive(false);
+            }
+        }
+    }
+
     private Vector3Int _coordinates = new();
     private Vector3Int Coordinates {
         get => _coordinates;
@@ -19,7 +34,7 @@ public class SelectionFigure : MonoBehaviour {
     private FigureSide attachedFigureSide = null;
 
     public void MoveSelectionFigure(FigureSide figureSide, Coordinates figureSideCoordinates, Vector3Int figureSideDirection) {
-        body.SetActive(true);
+        body.SetActive(Active);
         attachedFigureSide = figureSide;
         Coordinates = figureSideCoordinates.coordinates + figureSideDirection;
     }
@@ -32,7 +47,9 @@ public class SelectionFigure : MonoBehaviour {
     }
 
     public void ConfirmSelection() {
-        board.PlaceFigure(Coordinates);
+        if (Active) {
+            board.PlaceFigure(Coordinates);
+        }
     }
 
     public void SwitchForm() {

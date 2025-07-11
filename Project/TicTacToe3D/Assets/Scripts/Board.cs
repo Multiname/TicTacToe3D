@@ -12,6 +12,7 @@ public class Board : MonoBehaviour {
     [SerializeField] Figure[] figurePrefabs = new Figure[2];
 
     private readonly Figure[,,] placedFigures = new Figure[3, 3, 8];
+    private readonly int[,] cellsHeight = new int[3, 3];
 
     private void Start() {
         for (int i = 0; i < 3; ++i) {
@@ -24,12 +25,31 @@ public class Board : MonoBehaviour {
     public void PlaceFigure(Vector3Int coordinates) {
         Figure figure = Instantiate(figurePrefabs[(int)gameManager.CurrentPlayer], coordinates, Quaternion.identity);
         placedFigures[coordinates.x, coordinates.z, coordinates.y] = figure;
-        figure.GetComponent<Coordinates>().coordinates = coordinates;
+        Coordinates figureCoordinates = figure.GetComponent<Coordinates>();
+        figureCoordinates.coordinates = coordinates;
 
-        if (coordinates.y == 0) {
+        int currentCellHeight = cellsHeight[coordinates.x, coordinates.z];
+        if (coordinates.y > currentCellHeight) {
+            selectionFigure.Active = false;
+            figure.FallTo(cellsHeight[coordinates.x, coordinates.z], HandleFigureFall);
+            figureCoordinates.coordinates.y = currentCellHeight;
+        } else {
+            StartNextTurn();
+        }
+
+        if (figureCoordinates.coordinates.y == 0) {
             cellSelectionSides[coordinates.x, coordinates.z].gameObject.SetActive(false);
         }
 
+        cellsHeight[coordinates.x, coordinates.z]++;
+    }
+
+    private void HandleFigureFall() {
+        selectionFigure.Active = true;
+        StartNextTurn();
+    }
+
+    private void StartNextTurn() {
         gameManager.StartNextTurn();
         selectionFigure.SwitchForm();
     }
