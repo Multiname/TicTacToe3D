@@ -34,21 +34,31 @@ public class SelectionFigure : MonoBehaviour {
     private FigureSide attachedFigureSide = null;
 
     public void MoveSelectionFigure(FigureSide figureSide, Coordinates figureSideCoordinates, Vector3Int figureSideDirection) {
-        body.SetActive(Active);
-        attachedFigureSide = figureSide;
-        Coordinates = figureSideCoordinates.coordinates + figureSideDirection;
+        Vector3Int newCoordinates = figureSideCoordinates.coordinates + figureSideDirection;
+        if (!board.CheckFigureOn(newCoordinates)) {
+            body.SetActive(Active);
+            attachedFigureSide = figureSide;
+            Coordinates = newCoordinates;
+        }
     }
 
     public void Detach(FigureSide figureSide) {
         if (attachedFigureSide == figureSide) {
-            attachedFigureSide = null;
-            body.SetActive(false);
+            Detach();
         }
+    }
+
+    private void Detach() {
+        attachedFigureSide = null;
+        body.SetActive(false);
     }
 
     public void ConfirmSelection() {
         if (Active) {
             board.PlaceFigure(Coordinates);
+            if (board.CheckFigureOn(Coordinates)) {
+                Detach();
+            }
         }
     }
 
