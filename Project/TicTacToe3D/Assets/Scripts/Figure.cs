@@ -11,6 +11,8 @@ public class Figure : MonoBehaviour {
     [SerializeField] FigureType type = FigureType.SPHERE;
     [SerializeField] IdleAnimation idleAnimation;
 
+    public Coordinates coordinates;
+
     public void FallTo(int y, Action callback) {
         idleAnimation.enabled = false;
         StartCoroutine(Fall(y, callback));

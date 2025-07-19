@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class Board : MonoBehaviour {
-    [SerializeField] GameManager gameManager;
+    [SerializeField] FigureSidesBuilder figureSidesBuilder;
     [SerializeField] SelectionFigure selectionFigure;
 
     [SerializeField] Figure[] figurePrefabs = new Figure[2];
@@ -10,20 +10,20 @@ public class Board : MonoBehaviour {
     private readonly int[,] cellsHeight = new int[3, 3];
 
     public void PlaceFigure(Vector3Int coordinates) {
-        Figure figure = Instantiate(figurePrefabs[(int)gameManager.CurrentPlayer], coordinates, Quaternion.identity);
-        Coordinates figureCoordinates = figure.GetComponent<Coordinates>();
-        figureCoordinates.coordinates = coordinates;
+        Figure figure = Instantiate(figurePrefabs[(int)GameManager.CurrentPlayer], coordinates, Quaternion.identity);
+        figure.coordinates.coordinates = coordinates;
+        figureSidesBuilder.BuildSides(figure.transform, figure.coordinates);
 
         int currentCellHeight = cellsHeight[coordinates.x, coordinates.z];
         if (coordinates.y > currentCellHeight) {
             selectionFigure.Active = false;
             figure.FallTo(cellsHeight[coordinates.x, coordinates.z], HandleFigureFall);
-            figureCoordinates.coordinates.y = currentCellHeight;
+            figure.coordinates.coordinates.y = currentCellHeight;
         } else {
             StartNextTurn();
         }
 
-        placedFigures[figureCoordinates.coordinates.x, figureCoordinates.coordinates.z, figureCoordinates.coordinates.y] = figure;
+        placedFigures[figure.coordinates.coordinates.x, figure.coordinates.coordinates.z, figure.coordinates.coordinates.y] = figure;
         cellsHeight[coordinates.x, coordinates.z]++;
     }
 
@@ -33,7 +33,7 @@ public class Board : MonoBehaviour {
     }
 
     private void StartNextTurn() {
-        gameManager.StartNextTurn();
+        GameManager.StartNextTurn();
         selectionFigure.SwitchForm();
     }
 

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class FigureSide : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
-    private enum FigureSideType {
+    public enum FigureSideType {
         Y_PLUS,
         X_PLUS,
         X_MINUS,
@@ -17,11 +17,15 @@ public class FigureSide : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         new(0, 0, -1)
     };
 
-    private SelectionFigure selectionFigure;
-
-    [SerializeField] Coordinates coordinates;
     [SerializeField] FigureSideType type = FigureSideType.Y_PLUS;
     private Vector3Int direction = new();
+
+    [SerializeField] FigureSideFrame frame;
+
+    [field: SerializeField] public Coordinates Coordinates { private get; set; }
+    public bool Active { private get; set; } = true;
+
+    private SelectionFigure selectionFigure = null;
 
     private void Start() {
         direction = directions[(int)type];
@@ -30,14 +34,22 @@ public class FigureSide : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        selectionFigure.MoveSelectionFigure(this, coordinates, direction);
+        if (Active) {
+            frame.SetVisibility(true);
+            selectionFigure.MoveSelectionFigure(this, Coordinates, direction);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        selectionFigure.Detach(this);
+        if (Active) {
+            frame.SetVisibility(false);
+            selectionFigure.Detach(this);
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData) {
-        selectionFigure.ConfirmSelection();
+        if (Active) {
+            selectionFigure.ConfirmSelection();
+        }
     }
 }
