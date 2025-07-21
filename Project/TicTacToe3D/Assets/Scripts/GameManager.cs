@@ -9,7 +9,5 @@ public class GameManager : MonoBehaviour {
         } else {
             CurrentPlayer = Figure.FigureType.SPHERE;
         }
-
-        FigureSideFrameManager.InvokeStartNextTurn();
     }
 }

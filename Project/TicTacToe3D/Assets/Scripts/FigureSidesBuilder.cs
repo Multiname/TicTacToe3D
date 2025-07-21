@@ -2,11 +2,11 @@ using System;
 using UnityEngine;
 
 public class FigureSidesBuilder : MonoBehaviour {
-    [SerializeField] FigureSide SideYPlus;
-    [SerializeField] FigureSide SideXPlus;
-    [SerializeField] FigureSide SideXMinus;
-    [SerializeField] FigureSide SideZPlus;
-    [SerializeField] FigureSide SideZMinus;
+    [SerializeField] GameObject SideYPlus;
+    [SerializeField] GameObject SideXPlus;
+    [SerializeField] GameObject SideXMinus;
+    [SerializeField] GameObject SideZPlus;
+    [SerializeField] GameObject SideZMinus;
 
     private Action<Transform, Coordinates>[,] sidesBuilders;
 
@@ -14,45 +14,90 @@ public class FigureSidesBuilder : MonoBehaviour {
         sidesBuilders = new Action<Transform, Coordinates>[2, 3] {
             {
                 (parent, coordinates) => {
-                    Instantiate(SideXPlus, parent).Coordinates = coordinates;
-                    var side = Instantiate(SideXMinus, parent);
-                    side.Coordinates = coordinates;
-                    side.Active = false;
+                    AttachFigureSideComponent(
+                        CreateFigureSideObject(SideXPlus, parent),
+                        FigureSide.FigureSideType.X_PLUS,
+                        coordinates
+                    );
+
+                    CreateFigureSideObject(SideXMinus, parent);
                 },
                 (parent, coordinates) => {
-                    Instantiate(SideXPlus, parent).Coordinates = coordinates;
-                    Instantiate(SideXMinus, parent).Coordinates = coordinates;
+                    AttachFigureSideComponent(
+                        CreateFigureSideObject(SideXPlus, parent),
+                        FigureSide.FigureSideType.X_PLUS,
+                        coordinates
+                    );
+
+                    AttachFigureSideComponent(
+                        CreateFigureSideObject(SideXMinus, parent),
+                        FigureSide.FigureSideType.X_MINUS,
+                        coordinates
+                    );
                 },
                 (parent, coordinates) => {
-                    Instantiate(SideXMinus, parent).Coordinates = coordinates;
-                    var side = Instantiate(SideXPlus, parent);
-                    side.Coordinates = coordinates;
-                    side.Active = false;
+                    AttachFigureSideComponent(
+                        CreateFigureSideObject(SideXMinus, parent),
+                        FigureSide.FigureSideType.X_MINUS,
+                        coordinates
+                    );
+
+                    CreateFigureSideObject(SideXPlus, parent);
                 }
             },
             {
                 (parent, coordinates) => {
-                    Instantiate(SideZPlus, parent).Coordinates = coordinates;
-                    var side = Instantiate(SideZMinus, parent);
-                    side.Coordinates = coordinates;
-                    side.Active = false;
+                    AttachFigureSideComponent(
+                        CreateFigureSideObject(SideZPlus, parent),
+                        FigureSide.FigureSideType.Z_PLUS,
+                        coordinates
+                    );
+
+                    CreateFigureSideObject(SideZMinus, parent);
                 },
                 (parent, coordinates) => {
-                    Instantiate(SideZPlus, parent).Coordinates = coordinates;
-                    Instantiate(SideZMinus, parent).Coordinates = coordinates;
+                    AttachFigureSideComponent(
+                        CreateFigureSideObject(SideZPlus, parent),
+                        FigureSide.FigureSideType.Z_PLUS,
+                        coordinates
+                    );
+
+                    AttachFigureSideComponent(
+                        CreateFigureSideObject(SideZMinus, parent),
+                        FigureSide.FigureSideType.Z_MINUS,
+                        coordinates
+                    );
                 },
                 (parent, coordinates) => {
-                    Instantiate(SideZMinus, parent).Coordinates = coordinates;
-                    var side = Instantiate(SideZPlus, parent);
-                    side.Coordinates = coordinates;
-                    side.Active = false;
+                    AttachFigureSideComponent(
+                        CreateFigureSideObject(SideZMinus, parent),
+                        FigureSide.FigureSideType.Z_MINUS,
+                        coordinates
+                    );
+
+                    CreateFigureSideObject(SideZPlus, parent);
                 }
             }
         };
     }
 
+    private GameObject CreateFigureSideObject(GameObject side, Transform parent) {
+        return Instantiate(side, parent);
+    }
+
+    private void AttachFigureSideComponent(GameObject side, FigureSide.FigureSideType type, Coordinates coordinates) {
+        var figureSide = side.AddComponent<FigureSide>();
+        figureSide.Type = type;
+        figureSide.Coordinates = coordinates;
+    }
+
     public void BuildSides(Transform parent, Coordinates coordinates) {
-        Instantiate(SideYPlus, parent).Coordinates = coordinates;
+        AttachFigureSideComponent(
+            CreateFigureSideObject(SideYPlus, parent),
+            FigureSide.FigureSideType.Y_PLUS,
+            coordinates
+        );
+
         sidesBuilders[0, coordinates.coordinates.x](parent, coordinates);
         sidesBuilders[1, coordinates.coordinates.z](parent, coordinates);
     }
