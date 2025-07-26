@@ -8,7 +8,7 @@ public class Figure : MonoBehaviour {
         CROSS
     }
 
-    [SerializeField] FigureType type = FigureType.SPHERE;
+    [field: SerializeField] public FigureType Type { get; private set; } = FigureType.SPHERE;
     [SerializeField] IdleAnimation idleAnimation;
 
     public Coordinates coordinates;
