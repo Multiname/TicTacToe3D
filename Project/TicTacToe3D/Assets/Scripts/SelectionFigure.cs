@@ -19,17 +19,26 @@ public class SelectionFigure : MonoBehaviour {
         new(0, 0, -1)
     };
 
-    private bool _acitve = true;
-    public bool Active {
-        private get => _acitve;
+    private bool ReadyToPlace {
+        get => !FiguersFall && !CameraIsMoving;
+    }
+    private bool _figuresFall = false;
+    public bool FiguersFall {
+        private get => _figuresFall;
         set {
-            _acitve = value;
-            if (_acitve) {
-                if (attachedFigureSide != null) {
-                    body.SetActive(true);
-                }
-            } else {
-                body.SetActive(false);
+            _figuresFall = value;
+            if (attachedFigureSide != null) {
+                body.SetActive(ReadyToPlace);
+            }
+        }
+    }
+    private bool _cameraIsMoving = false;
+    public bool CameraIsMoving {
+        private get => _cameraIsMoving;
+        set {
+            _cameraIsMoving = value;
+            if (attachedFigureSide != null) {
+                body.SetActive(ReadyToPlace);
             }
         }
     }
@@ -55,8 +64,8 @@ public class SelectionFigure : MonoBehaviour {
 
     public void MoveSelectionFigure(FigureSide figureSide, Coordinates figureSideCoordinates, FigureSide.FigureSideType figureSideType) {
         Vector3Int newCoordinates = figureSideCoordinates.coordinates + figureSideDirections[(int)figureSideType];
-        if (!board.CheckFigureOn(newCoordinates)) {
-            body.SetActive(Active);
+        if (!board.CheckFigureOn(newCoordinates) && newCoordinates.y < Board.MAX_Y) {
+            body.SetActive(ReadyToPlace);
 
             if (visibleFigureSideFrame != null) {
                 visibleFigureSideFrame.SetVisibility(false);
@@ -83,7 +92,7 @@ public class SelectionFigure : MonoBehaviour {
     }
 
     public void ConfirmSelection() {
-        if (Active && !board.CheckFigureOn(Coordinates)) {
+        if (ReadyToPlace && body.activeSelf) {
             board.PlaceFigure(Coordinates);
             if (board.CheckFigureOn(Coordinates)) {
                 Detach();

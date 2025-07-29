@@ -2125,6 +2125,7 @@ MonoBehaviour:
   figurePrefabs:
   - {fileID: 6845511858828528626, guid: fba4a90f62e226d4686766bc8dc518a6, type: 3}
   - {fileID: 600527763581448885, guid: 29959abd108b3f747a6f8fa4f79a4114, type: 3}
+  figuresToBlow: []
 --- !u!1 &1107498688
 GameObject:
   m_ObjectHideFlags: 0
@@ -2235,6 +2236,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1272748988}
+  - component: {fileID: 1272748989}
   m_Layer: 0
   m_Name: CameraAxis
   m_TagString: Untagged
@@ -2258,6 +2260,23 @@ Transform:
   - {fileID: 330585546}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 35, z: 0}
+--- !u!114 &1272748989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272748987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccc672211013925418b4f9cb5ba0dc53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectionFigure: {fileID: 1884768656}
+  rotationSpeed: 0.3
+  moveSpeed: 0.008
+  activationThreshold: 10
+  maxHeight: 2
 --- !u!1 &1372085723
 GameObject:
   m_ObjectHideFlags: 0

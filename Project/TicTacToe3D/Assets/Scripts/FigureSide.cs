@@ -14,10 +14,12 @@ public class FigureSide : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     [field: SerializeField] public Coordinates Coordinates { private get; set; }
 
-    private SelectionFigure selectionFigure = null;
+    private static SelectionFigure selectionFigure = null;
 
     private void Start() {
-        selectionFigure = GameObject.FindWithTag("SelectionFigure").GetComponent<SelectionFigure>();
+        if (selectionFigure == null) {
+            selectionFigure = GameObject.FindWithTag("SelectionFigure").GetComponent<SelectionFigure>();
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -29,6 +31,12 @@ public class FigureSide : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public void OnPointerClick(PointerEventData eventData) {
-        selectionFigure.ConfirmSelection();
+        if (eventData.button == PointerEventData.InputButton.Left) {
+            selectionFigure.ConfirmSelection();
+        }
+    }
+
+    private void OnDestroy() {
+        selectionFigure.Detach(this);
     }
 }

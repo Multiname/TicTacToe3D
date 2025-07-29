@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Board : MonoBehaviour {
+    private const int MAX_X = 3;
+    private const int MAX_Z = 3;
+    public const int MAX_Y = 3;
+
     [SerializeField] FigureSidesBuilder figureSidesBuilder;
     [SerializeField] SelectionFigure selectionFigure;
 
     [SerializeField] Figure[] figurePrefabs = new Figure[2];
 
-    private readonly Figure[,,] placedFigures = new Figure[3, 3, 10];
+    private readonly Figure[,,] placedFigures = new Figure[MAX_X, MAX_Z, MAX_Y+2];
     private readonly bool[][,,] placingState = new bool[][,,] {
-        new bool[3, 3, 10],
-        new bool[3, 3, 10],
+        new bool[MAX_X, MAX_Z, MAX_Y+2],
+        new bool[MAX_X, MAX_Z, MAX_Y+2]
     };
-    private readonly int[,] cellsHeight = new int[3, 3];
+    private readonly int[,] cellsHeight = new int[MAX_X, MAX_Z];
 
     private Action<Figure.FigureType, int, int, int, int, int>[] singleFigureLineFinders;
     [SerializeField] private List<Figure> figuresToBlow = new();
@@ -198,7 +202,7 @@ public class Board : MonoBehaviour {
             figure.coordinates.coordinates.y = currentCellHeight;
             UpdateFigureMatrices(figure);
 
-            selectionFigure.Active = false;
+            selectionFigure.FiguersFall = true;
             figure.FallTo(currentCellHeight, () => BlowLinesAroundFigure(figure.Type, figure.coordinates.coordinates));
         } else {
             UpdateFigureMatrices(figure);
@@ -237,9 +241,9 @@ public class Board : MonoBehaviour {
             UpdateFigureMatrices(figure);
         }
         if (figuresToFall.Count > 0) {
-            selectionFigure.Active = false;
+            selectionFigure.FiguersFall = true;
         } else {
-            selectionFigure.Active = true;
+            selectionFigure.FiguersFall = false;
             StartNextTurn();
         }
         figuresToFall.Clear();
@@ -273,7 +277,7 @@ public class Board : MonoBehaviour {
             return;
         }
 
-        selectionFigure.Active = true;
+        selectionFigure.FiguersFall = false;
         StartNextTurn();
 
         Debug.Log("BlowLinesAroundFigures");
