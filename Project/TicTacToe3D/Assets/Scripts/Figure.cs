@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 
 public class Figure : MonoBehaviour {
+    public const int NUMBER_OF_FIGURE_TYPES = 2;
     public enum FigureType {
         SPHERE,
         CROSS
