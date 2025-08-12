@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class SelectionFigure : MonoBehaviour {
@@ -19,27 +20,36 @@ public class SelectionFigure : MonoBehaviour {
         new(0, 0, -1)
     };
 
+    [Flags]
+    private enum DisablingActions {
+        ReadyToPlace = 0,
+        FiguresFall = 1,
+        CameraIsRotating = 2,
+        CameraIsInTransition = 4
+    }
+    private DisablingActions readinessState = DisablingActions.ReadyToPlace;
+
     private bool ReadyToPlace {
-        get => !FiguersFall && !CameraIsMoving;
+        get => readinessState == DisablingActions.ReadyToPlace;
     }
-    private bool _figuresFall = false;
-    public bool FiguersFall {
-        private get => _figuresFall;
-        set {
-            _figuresFall = value;
-            if (attachedFigureSide != null) {
-                body.SetActive(ReadyToPlace);
-            }
+    public bool FiguresFall {
+        set => SetDisablingActionsFlag(DisablingActions.FiguresFall, value);
+    }
+    public bool CameraIsRotating {
+        set => SetDisablingActionsFlag(DisablingActions.CameraIsRotating, value);
+    }
+    public bool CameraIsInTransition {
+        set => SetDisablingActionsFlag(DisablingActions.CameraIsInTransition, value);
+    }
+    private void SetDisablingActionsFlag(DisablingActions flag, bool active) {
+        if (active) {
+            readinessState |= flag;
+        } else {
+            readinessState &= ~flag;
         }
-    }
-    private bool _cameraIsMoving = false;
-    public bool CameraIsMoving {
-        private get => _cameraIsMoving;
-        set {
-            _cameraIsMoving = value;
-            if (attachedFigureSide != null) {
-                body.SetActive(ReadyToPlace);
-            }
+
+        if (attachedFigureSide != null) {
+            body.SetActive(ReadyToPlace);
         }
     }
 

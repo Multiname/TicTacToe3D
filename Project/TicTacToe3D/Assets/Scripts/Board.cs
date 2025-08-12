@@ -5,7 +5,7 @@ using UnityEngine;
 public class Board : MonoBehaviour {
     private const int MAX_X = 3;
     private const int MAX_Z = 3;
-    public const int MAX_Y = 3;
+    public const int MAX_Y = 5;
     private const int NUMBER_OF_LINE_TYPES = 13;
 
     private enum LineType {
@@ -123,6 +123,7 @@ public class Board : MonoBehaviour {
 
     [SerializeField] FigureSidesBuilder figureSidesBuilder;
     [SerializeField] SelectionFigure selectionFigure;
+    [SerializeField] CameraMovement cameraMovement;
 
     [SerializeField] Figure[] figurePrefabs = new Figure[Figure.NUMBER_OF_FIGURE_TYPES];
 
@@ -427,7 +428,7 @@ public class Board : MonoBehaviour {
             figure.coordinates.coordinates.y = currentCellHeight;
             UpdateFigureMatrices(figure);
 
-            selectionFigure.FiguersFall = true;
+            selectionFigure.FiguresFall = true;
             figure.FallTo(currentCellHeight, () => HandleFigureFall(figure.Type, figure.coordinates.coordinates));
         } else {
             UpdateFigureMatrices(figure);
@@ -496,9 +497,9 @@ public class Board : MonoBehaviour {
             UpdateFigureMatrices(figure);
         }
         if (figuresToFall.Count > 0) {
-            selectionFigure.FiguersFall = true;
+            selectionFigure.FiguresFall = true;
         } else {
-            selectionFigure.FiguersFall = false;
+            selectionFigure.FiguresFall = false;
             StartNextTurn();
         }
     }
@@ -549,9 +550,23 @@ public class Board : MonoBehaviour {
         LogPlacingState();
     }
 
+    private int GetCurrentMaxHeight() {
+        int maxHeight = 0;
+        foreach (var height in cellsHeight) {
+            if (height > maxHeight) {
+                maxHeight = height;
+            }
+        }
+        return maxHeight;
+    }
+
     private void StartNextTurn() {
-        GameManager.StartNextTurn();
-        selectionFigure.SwitchForm();
+        selectionFigure.CameraIsInTransition = true;
+        cameraMovement.UpdateFieldOfView(GetCurrentMaxHeight(), () => { 
+            selectionFigure.CameraIsInTransition = false;
+            GameManager.StartNextTurn();
+            selectionFigure.SwitchForm();
+        });
     }
 
     public bool CheckFigureOn(Vector3Int coordinates) {

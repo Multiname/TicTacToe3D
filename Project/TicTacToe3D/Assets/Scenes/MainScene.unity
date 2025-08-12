@@ -729,7 +729,7 @@ Camera:
   far clip plane: 20
   field of view: 60
   orthographic: 1
-  orthographic size: 1.5
+  orthographic size: 2
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -754,7 +754,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
-  m_LocalPosition: {x: 0, y: 2, z: -3}
+  m_LocalPosition: {x: 0, y: 2.5, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2122,10 +2122,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   figureSidesBuilder: {fileID: 591376105}
   selectionFigure: {fileID: 1884768656}
+  cameraMovement: {fileID: 1272748989}
   figurePrefabs:
   - {fileID: 6845511858828528626, guid: fba4a90f62e226d4686766bc8dc518a6, type: 3}
   - {fileID: 600527763581448885, guid: 29959abd108b3f747a6f8fa4f79a4114, type: 3}
-  figuresToBlow: []
 --- !u!1 &1107498688
 GameObject:
   m_ObjectHideFlags: 0
@@ -2277,6 +2277,7 @@ MonoBehaviour:
   moveSpeed: 0.008
   activationThreshold: 10
   maxHeight: 2
+  transitionSpeed: 3
 --- !u!1 &1372085723
 GameObject:
   m_ObjectHideFlags: 0
