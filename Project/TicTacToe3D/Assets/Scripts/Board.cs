@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Board : MonoBehaviour {
-    private const int MAX_X = 3;
-    private const int MAX_Z = 3;
+    public const int MAX_X = 3;
+    public const int MAX_Z = 3;
     public const int MAX_Y = 5;
     private const int NUMBER_OF_LINE_TYPES = 13;
 
@@ -424,6 +424,9 @@ public class Board : MonoBehaviour {
 
         int currentCellHeight = cellsHeight[coordinates.x, coordinates.z]++;
         LogCellsHeight();
+        if (currentCellHeight == 0) {
+            CellsShadows.ShowShadow(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z, figure.Type);
+        }
         if (coordinates.y > currentCellHeight) {
             figure.coordinates.coordinates.y = currentCellHeight;
             UpdateFigureMatrices(figure);
@@ -477,8 +480,12 @@ public class Board : MonoBehaviour {
 
     private void BlowFigures(ICollection<Figure> figuresToBlowCollection) {
         foreach (var figure in figuresToBlowCollection) {
-            cellsHeight[figure.coordinates.coordinates.x, figure.coordinates.coordinates.z]--;
+            int newHeight = --cellsHeight[figure.coordinates.coordinates.x, figure.coordinates.coordinates.z];
             LogCellsHeight();
+
+            if (newHeight == 0) {
+                CellsShadows.HideShadow(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z);
+            }
 
             RemoveFigureFromMatrices(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z, figure.coordinates.coordinates.y);
             Destroy(figure.gameObject);
@@ -492,6 +499,14 @@ public class Board : MonoBehaviour {
             RemoveFigureFromMatrices(coords.x, coords.z, coords.y);
         }
         foreach (var (figure, newHeight) in figuresToFall) {
+            if (newHeight == 0) {
+                CellsShadows.ShowShadow(
+                    figure.coordinates.coordinates.x,
+                    figure.coordinates.coordinates.z,
+                    figure.Type
+                );
+            }
+
             figure.FallTo(newHeight, HandleFiguresFall);
             figure.coordinates.coordinates.y = newHeight;
             UpdateFigureMatrices(figure);
