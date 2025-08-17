@@ -124,6 +124,8 @@ public class Board : MonoBehaviour {
     [SerializeField] FigureSidesBuilder figureSidesBuilder;
     [SerializeField] SelectionFigure selectionFigure;
     [SerializeField] CameraMovement cameraMovement;
+    [SerializeField] UiCanvas uiCanvas;
+    [SerializeField] GameManager gameManager;
 
     [SerializeField] Figure[] figurePrefabs = new Figure[Figure.NUMBER_OF_FIGURE_TYPES];
 
@@ -142,6 +144,7 @@ public class Board : MonoBehaviour {
     private readonly HashSet<Figure> figuresToBlowSet = new();
     private readonly Dictionary<Figure, int> figuresToFall = new();
     private int figuresToFallCount = 0;
+    private readonly int[] gainedPoints = new int[Figure.NUMBER_OF_FIGURE_TYPES];
 
     private void LogPlacedFigures() {
         var log = "placedFigures [ ";
@@ -372,6 +375,12 @@ public class Board : MonoBehaviour {
         }
     }
 
+    private void ResetGainedPoints() {
+        for (int i = 0; i < Figure.NUMBER_OF_FIGURE_TYPES; ++i) {
+            gainedPoints[i] = 0;
+        }
+    }
+
     private void CheckLine(bool[,,] figurePlacingState, int x_0, int z_0, int y_0, int x_1, int z_1, int y_1) {
         if (y_0 >= 0 &&
             y_1 >= 0 &&
@@ -418,7 +427,7 @@ public class Board : MonoBehaviour {
     }
 
     public void PlaceFigure(Vector3Int coordinates) {
-        Figure figure = Instantiate(figurePrefabs[(int)GameManager.CurrentPlayer], coordinates, Quaternion.identity);
+        Figure figure = Instantiate(figurePrefabs[(int)gameManager.CurrentPlayer], coordinates, Quaternion.identity);
         figure.coordinates.coordinates = coordinates;
         figureSidesBuilder.BuildSides(figure.transform, figure.coordinates);
 
@@ -487,6 +496,7 @@ public class Board : MonoBehaviour {
                 CellsShadows.HideShadow(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z);
             }
 
+            ++gainedPoints[(int)figure.Type];
             RemoveFigureFromMatrices(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z, figure.coordinates.coordinates.y);
             Destroy(figure.gameObject);
         }
@@ -576,10 +586,15 @@ public class Board : MonoBehaviour {
     }
 
     private void StartNextTurn() {
+        for (Figure.FigureType i = 0; (int)i < Figure.NUMBER_OF_FIGURE_TYPES; ++i) {
+            gameManager.AddPointsToPlayer(i, gainedPoints[(int)i]);
+        }
+        ResetGainedPoints();
+
         selectionFigure.CameraIsInTransition = true;
-        cameraMovement.UpdateFieldOfView(GetCurrentMaxHeight(), () => { 
+        cameraMovement.UpdateFieldOfView(GetCurrentMaxHeight(), () => {
             selectionFigure.CameraIsInTransition = false;
-            GameManager.StartNextTurn();
+            gameManager.StartNextTurn();
             selectionFigure.SwitchForm();
         });
     }

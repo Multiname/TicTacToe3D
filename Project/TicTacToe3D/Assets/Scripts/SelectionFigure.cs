@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SelectionFigure : MonoBehaviour {
     [SerializeField] Board board;
+    [SerializeField] GameManager gameManager;
 
     [SerializeField] GameObject body;
     [SerializeField] GameObject sphereForm;
@@ -115,7 +116,7 @@ public class SelectionFigure : MonoBehaviour {
         crossForm.SetActive(!crossForm.activeSelf);
 
         foreach (var frame in figureSideFrames) {
-            frame.SetMeterial(frameMaterials[(int)GameManager.CurrentPlayer]);
+            frame.SetMeterial(frameMaterials[(int)gameManager.CurrentPlayer]);
         }
     }
 }
