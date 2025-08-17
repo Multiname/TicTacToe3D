@@ -7,6 +7,9 @@ public class Board : MonoBehaviour {
     public const int MAX_Z = 3;
     public const int MAX_Y = 5;
     private const int NUMBER_OF_LINE_TYPES = 13;
+    private const int LINE_1D_BONUS_POINTS = 0;
+    private const int LINE_2D_BONUS_POINTS = 1;
+    private const int LINE_3D_BONUS_POINTS = 2;
 
     private enum LineType {
         LINE_1D_X,
@@ -23,6 +26,25 @@ public class Board : MonoBehaviour {
         LINE_3D_X1_Z0,
         LINE_3D_X1_Z1
     }
+
+    private readonly int[] lineTypeBonusPoints = new int[NUMBER_OF_LINE_TYPES] {
+        LINE_1D_BONUS_POINTS,
+        LINE_1D_BONUS_POINTS,
+        LINE_1D_BONUS_POINTS,
+
+        LINE_2D_BONUS_POINTS,
+        LINE_2D_BONUS_POINTS,
+        LINE_2D_BONUS_POINTS,
+        LINE_2D_BONUS_POINTS,
+        LINE_2D_BONUS_POINTS,
+        LINE_2D_BONUS_POINTS,
+
+        LINE_3D_BONUS_POINTS,
+        LINE_3D_BONUS_POINTS,
+        LINE_3D_BONUS_POINTS,
+        LINE_3D_BONUS_POINTS
+    };
+
     private readonly LineType[] line2dYTranslation = new LineType[2] {
         LineType.LINE_2D_Y_ASC,
         LineType.LINE_2D_Y_DESC
@@ -218,32 +240,40 @@ public class Board : MonoBehaviour {
     private void Start() {
         ResetDetectedLines();
 
+        Action<int, int, int, int, int, int, int> buildCheckLineForSingleFigureLineFinder(Figure.FigureType figureType) {
+            return (x_0, z_0, y_0, x_1, z_1, y_1, bonusPoints) => {
+                if (CheckLine(
+                    placingState[(int)figureType],
+                    x_0, z_0, y_0,
+                    x_1, z_1, y_1
+                )) {
+                    gainedPoints[(int)figureType] += bonusPoints;
+                }
+            };
+        }
+
         singleFigureLineFinders = new Action<Figure.FigureType, int, int, int, int, int>[3] {
             (t, x, x_, z, z_, y) => {
                 int y_m = y - 1;
                 int y_p = y + 1;
 
-                void checkLine (int x_0, int z_0, int y_0, int x_1, int z_1, int y_1) => CheckLine(
-                    placingState[(int)t],
-                    x_0, z_0, y_0,
-                    x_1, z_1, y_1
-                );
+                var checkLine = buildCheckLineForSingleFigureLineFinder(t);
 
-                checkLine(0, 1, y, 2, 1, y);
-                checkLine(1, 0, y, 1, 2, y);
-                checkLine(1, 1, y_m, 1, 1, y-2);
+                checkLine(0, 1, y, 2, 1, y, LINE_1D_BONUS_POINTS);
+                checkLine(1, 0, y, 1, 2, y, LINE_1D_BONUS_POINTS);
+                checkLine(1, 1, y_m, 1, 1, y-2, LINE_1D_BONUS_POINTS);
 
-                checkLine(0, 1, y_p, 2, 1, y_m);
-                checkLine(0, 1, y_m, 2, 1, y_p);
-                checkLine(1, 0, y_p, 1, 2, y_m);
-                checkLine(1, 0, y_m, 1, 2, y_p);
-                checkLine(0, 0, y, 2, 2, y);
-                checkLine(0, 2, y, 2, 0, y);
+                checkLine(0, 1, y_p, 2, 1, y_m, LINE_2D_BONUS_POINTS);
+                checkLine(0, 1, y_m, 2, 1, y_p, LINE_2D_BONUS_POINTS);
+                checkLine(1, 0, y_p, 1, 2, y_m, LINE_2D_BONUS_POINTS);
+                checkLine(1, 0, y_m, 1, 2, y_p, LINE_2D_BONUS_POINTS);
+                checkLine(0, 0, y, 2, 2, y, LINE_2D_BONUS_POINTS);
+                checkLine(0, 2, y, 2, 0, y, LINE_2D_BONUS_POINTS);
 
-                checkLine(0, 0, y_m, 2, 2, y_p);
-                checkLine(0, 0, y_p, 2, 2, y_m);
-                checkLine(0, 2, y_m, 2, 0, y_p);
-                checkLine(0, 2, y_p, 2, 0, y_m);
+                checkLine(0, 0, y_m, 2, 2, y_p, LINE_3D_BONUS_POINTS);
+                checkLine(0, 0, y_p, 2, 2, y_m, LINE_3D_BONUS_POINTS);
+                checkLine(0, 2, y_m, 2, 0, y_p, LINE_3D_BONUS_POINTS);
+                checkLine(0, 2, y_p, 2, 0, y_m, LINE_3D_BONUS_POINTS);
 
                 if (figuresToBlowList.Count > 0) {
                     figuresToBlowList.Add(placedFigures[x, z, y]);
@@ -262,20 +292,16 @@ public class Board : MonoBehaviour {
                 int y_p = y + 1;
                 int y_m_2 = y - 2;
 
-                void checkLine (int x_0, int z_0, int y_0, int x_1, int z_1, int y_1) => CheckLine(
-                    placingState[(int)t],
-                    x_0, z_0, y_0,
-                    x_1, z_1, y_1
-                );
+                var checkLine = buildCheckLineForSingleFigureLineFinder(t);
 
-                checkLine(x_m_z, z_m_x, y, x_p_z, z_p_x, y);
-                checkLine(1, 1, y, abs_x, abs_z, y);
-                checkLine(x, z, y_m, x, z, y_m_2);
+                checkLine(x_m_z, z_m_x, y, x_p_z, z_p_x, y, LINE_1D_BONUS_POINTS);
+                checkLine(1, 1, y, abs_x, abs_z, y, LINE_1D_BONUS_POINTS);
+                checkLine(x, z, y_m, x, z, y_m_2, LINE_1D_BONUS_POINTS);
 
-                checkLine(x_m_z, z_m_x, y_m, x_p_z, z_p_x, y_p);
-                checkLine(x_m_z, z_m_x, y_p, x_p_z, z_p_x, y_m);
-                checkLine(1, 1, y_p, abs_x, abs_z, y+2);
-                checkLine(1, 1, y_m, abs_x, abs_z, y_m_2);
+                checkLine(x_m_z, z_m_x, y_m, x_p_z, z_p_x, y_p, LINE_2D_BONUS_POINTS);
+                checkLine(x_m_z, z_m_x, y_p, x_p_z, z_p_x, y_m, LINE_2D_BONUS_POINTS);
+                checkLine(1, 1, y_p, abs_x, abs_z, y+2, LINE_2D_BONUS_POINTS);
+                checkLine(1, 1, y_m, abs_x, abs_z, y_m_2, LINE_2D_BONUS_POINTS);
 
                 if (figuresToBlowList.Count > 0) {
                     figuresToBlowList.Add(placedFigures[x, z, y]);
@@ -290,24 +316,20 @@ public class Board : MonoBehaviour {
                 int y_m_2 = y - 2;
                 int y_p_2 = y + 2;
 
-                void checkLine (int x_0, int z_0, int y_0, int x_1, int z_1, int y_1) => CheckLine(
-                    placingState[(int)t],
-                    x_0, z_0, y_0,
-                    x_1, z_1, y_1
-                );
+                var checkLine = buildCheckLineForSingleFigureLineFinder(t);
 
-                checkLine(abs_x, z, y, 1, z, y);
-                checkLine(x, abs_z, y, x, 1, y);
-                checkLine(x, z, y_m, x, z, y_m_2);
+                checkLine(abs_x, z, y, 1, z, y, LINE_1D_BONUS_POINTS);
+                checkLine(x, abs_z, y, x, 1, y, LINE_1D_BONUS_POINTS);
+                checkLine(x, z, y_m, x, z, y_m_2, LINE_1D_BONUS_POINTS);
 
-                checkLine(abs_x, z, y_p_2, 1, z, y_p);
-                checkLine(abs_x, z, y_m_2, 1, z, y_m);
-                checkLine(x, abs_z, y_p_2, x, 1, y_p);
-                checkLine(x, abs_z, y_m_2, x, 1, y_m);
-                checkLine(abs_x, abs_z, y, 1, 1, y);
+                checkLine(abs_x, z, y_p_2, 1, z, y_p, LINE_2D_BONUS_POINTS);
+                checkLine(abs_x, z, y_m_2, 1, z, y_m, LINE_2D_BONUS_POINTS);
+                checkLine(x, abs_z, y_p_2, x, 1, y_p, LINE_2D_BONUS_POINTS);
+                checkLine(x, abs_z, y_m_2, x, 1, y_m, LINE_2D_BONUS_POINTS);
+                checkLine(abs_x, abs_z, y, 1, 1, y, LINE_2D_BONUS_POINTS);
 
-                checkLine(abs_x, abs_z, y_p_2, 1, 1, y_p);
-                checkLine(abs_x, abs_z, y_m_2, 1, 1, y_m);
+                checkLine(abs_x, abs_z, y_p_2, 1, 1, y_p, LINE_3D_BONUS_POINTS);
+                checkLine(abs_x, abs_z, y_m_2, 1, 1, y_m, LINE_3D_BONUS_POINTS);
 
                 if (figuresToBlowList.Count > 0) {
                     figuresToBlowList.Add(placedFigures[x, z, y]);
@@ -381,7 +403,7 @@ public class Board : MonoBehaviour {
         }
     }
 
-    private void CheckLine(bool[,,] figurePlacingState, int x_0, int z_0, int y_0, int x_1, int z_1, int y_1) {
+    private bool CheckLine(bool[,,] figurePlacingState, int x_0, int z_0, int y_0, int x_1, int z_1, int y_1) {
         if (y_0 >= 0 &&
             y_1 >= 0 &&
             figurePlacingState[x_0, z_0, y_0] &&
@@ -389,38 +411,44 @@ public class Board : MonoBehaviour {
         ) {
             figuresToBlowList.Add(placedFigures[x_0, z_0, y_0]);
             figuresToBlowList.Add(placedFigures[x_1, z_1, y_1]);
+            return true;
         }
+        return false;
     }
 
-    private void CheckLine(bool[,,] figurePlacingState, Vector3Int coord_0, Vector3Int coord_1, Vector3Int anchor) {
+    private bool CheckLine(bool[,,] figurePlacingState, Vector3Int coord_0, Vector3Int coord_1, Vector3Int anchor) {
         if (coord_0.y >= 0 &&
             coord_1.y >= 0 &&
             anchor.y >= 0 &&
             figurePlacingState[coord_0.x, coord_0.z, coord_0.y] &&
             figurePlacingState[coord_1.x, coord_1.z, coord_1.y] &&
-            figurePlacingState[anchor.x, anchor.z, anchor.y] 
+            figurePlacingState[anchor.x, anchor.z, anchor.y]
         ) {
             figuresToBlowSet.Add(placedFigures[coord_0.x, coord_0.z, coord_0.y]);
             figuresToBlowSet.Add(placedFigures[coord_1.x, coord_1.z, coord_1.y]);
             figuresToBlowSet.Add(placedFigures[anchor.x, anchor.z, anchor.y]);
+            return true;
         }
+        return false;
     }
 
     private void CheckDetectedLines() {
-        for (int figureType = 0; figureType < Figure.NUMBER_OF_FIGURE_TYPES; ++figureType) {
-            HashSet<Vector3Int>[] lines = detectedLines[figureType];
+        for (Figure.FigureType figureType = 0; (int)figureType < Figure.NUMBER_OF_FIGURE_TYPES; ++figureType) {
+            HashSet<Vector3Int>[] lines = detectedLines[(int)figureType];
 
-            for (int lineType = 0; lineType < NUMBER_OF_LINE_TYPES; ++lineType) {
-                foreach (Vector3Int lineAnchor in lines[lineType]) {
+            for (LineType lineType = 0; (int)lineType < NUMBER_OF_LINE_TYPES; ++lineType) {
+                foreach (Vector3Int lineAnchor in lines[(int)lineType]) {
                     int x = lineAnchor.x;
                     int z = lineAnchor.z;
                     int y = lineAnchor.y;
 
-                    Vector3Int coord_0 = linesRelativeCoordinates[lineType, 0](x, z, y);
-                    Vector3Int coord_1 = linesRelativeCoordinates[lineType, 1](x, z, y);
-                    Vector3Int anchor = linesRelativeCoordinates[lineType, 2](x, z, y);
+                    Vector3Int coord_0 = linesRelativeCoordinates[(int)lineType, 0](x, z, y);
+                    Vector3Int coord_1 = linesRelativeCoordinates[(int)lineType, 1](x, z, y);
+                    Vector3Int anchor = linesRelativeCoordinates[(int)lineType, 2](x, z, y);
 
-                    CheckLine(placingState[figureType], coord_0, coord_1, anchor);
+                    if (CheckLine(placingState[(int)figureType], coord_0, coord_1, anchor)) {
+                        gainedPoints[(int)figureType] += lineTypeBonusPoints[(int)lineType];
+                    }
                 }
             }
         }
