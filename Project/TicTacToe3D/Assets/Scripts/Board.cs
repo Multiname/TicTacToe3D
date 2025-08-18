@@ -531,6 +531,8 @@ public class Board : MonoBehaviour {
             }
 
             ++gainedPoints[(int)figure.Type];
+            gainedPoints[(int)figure.Type] += figure.coordinates.coordinates.y;
+            
             RemoveFigureFromMatrices(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z, figure.coordinates.coordinates.y);
             Destroy(figure.gameObject);
         }
