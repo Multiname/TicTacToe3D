@@ -170,6 +170,7 @@ public class Board : MonoBehaviour {
 
     private readonly int[] gainedPoints = new int[Figure.NUMBER_OF_FIGURE_TYPES];
     private bool playerBlewLine = false;
+    private int comboCount = 1;
 
     private void LogPlacedFigures() {
         var log = "placedFigures [ ";
@@ -451,6 +452,7 @@ public class Board : MonoBehaviour {
 
                     if (CheckLine(placingState[(int)figureType], coord_0, coord_1, anchor)) {
                         gainedPoints[(int)figureType] += lineTypeBonusPoints[(int)lineType];
+                        gainedPoints[(int)figureType] += comboCount;
                     }
                 }
             }
@@ -589,6 +591,8 @@ public class Board : MonoBehaviour {
         }
 
         CheckDetectedLines();
+        ++comboCount;
+
         CheckBlowingAmongFallen();
         ResetDetectedLines();
         MarkFiguresToFall(figuresToBlowSet);
@@ -641,6 +645,7 @@ public class Board : MonoBehaviour {
             gameManager.AddPointsToPlayer(i, gainedPoints[(int)i]);
         }
         ResetGainedPoints();
+        comboCount = 1;
 
         selectionFigure.CameraIsInTransition = true;
         cameraMovement.UpdateFieldOfView(GetCurrentMaxHeight(), () => {
