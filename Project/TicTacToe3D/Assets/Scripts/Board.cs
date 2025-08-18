@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Board : MonoBehaviour {
@@ -469,22 +470,27 @@ public class Board : MonoBehaviour {
             UpdateFigureMatrices(figure);
 
             selectionFigure.FiguresFall = true;
-            figure.FallTo(currentCellHeight, () => HandleFigureFall(figure.Type, figure.coordinates.coordinates));
+            figure.FallTo(currentCellHeight, () => HandleFigureFall(figure, true));
         } else {
             UpdateFigureMatrices(figure);
-            HandleFigureFall(figure.Type, figure.coordinates.coordinates);
+            HandleFigureFall(figure, false);
         }
     }
 
-    private void HandleFigureFall(Figure.FigureType type, Vector3Int coordinates) {
-        int x = coordinates.x;
-        int z = coordinates.z;
-        int y = coordinates.y;
+    private void HandleFigureFall(Figure figure, bool fell) {
+        int x = figure.coordinates.coordinates.x;
+        int z = figure.coordinates.coordinates.z;
+        int y = figure.coordinates.coordinates.y;
 
         int x_ = Mathf.Abs(x - 1);
         int z_ = Mathf.Abs(z - 1);
 
-        singleFigureLineFinders[x_ + z_](type, x, x_, z, z_, y);
+        singleFigureLineFinders[x_ + z_](figure.Type, x, x_, z, z_, y);
+
+        if (fell && figuresToBlowList.Contains(figure)) {
+            ++gainedPoints[(int)figure.Type];
+        }
+
         MarkFiguresToFall(figuresToBlowList);
         LogFiguresToFall();
 
@@ -575,11 +581,20 @@ public class Board : MonoBehaviour {
         }
 
         CheckDetectedLines();
+        CheckBlowingAmongFallen();
         ResetDetectedLines();
         MarkFiguresToFall(figuresToBlowSet);
 
         BlowFigures(figuresToBlowSet);
         DropFigures();
+    }
+
+    private void CheckBlowingAmongFallen() {
+        foreach (Figure figure in figuresToBlowSet) {
+            if (figuresToFall.Keys.Contains(figure)) {
+                ++gainedPoints[(int)figure.Type];
+            }
+        }
     }
 
     private void UpdateFigureMatrices(Figure figure) {
