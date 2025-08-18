@@ -167,7 +167,9 @@ public class Board : MonoBehaviour {
     private readonly HashSet<Figure> figuresToBlowSet = new();
     private readonly Dictionary<Figure, int> figuresToFall = new();
     private int figuresToFallCount = 0;
+
     private readonly int[] gainedPoints = new int[Figure.NUMBER_OF_FIGURE_TYPES];
+    private bool playerBlewLine = false;
 
     private void LogPlacedFigures() {
         var log = "placedFigures [ ";
@@ -532,7 +534,11 @@ public class Board : MonoBehaviour {
 
             ++gainedPoints[(int)figure.Type];
             gainedPoints[(int)figure.Type] += figure.coordinates.coordinates.y;
-            
+
+            if (figure.Type == gameManager.CurrentPlayer) {
+                playerBlewLine = true;
+            }
+
             RemoveFigureFromMatrices(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z, figure.coordinates.coordinates.y);
             Destroy(figure.gameObject);
         }
@@ -639,8 +645,12 @@ public class Board : MonoBehaviour {
         selectionFigure.CameraIsInTransition = true;
         cameraMovement.UpdateFieldOfView(GetCurrentMaxHeight(), () => {
             selectionFigure.CameraIsInTransition = false;
-            gameManager.StartNextTurn();
-            selectionFigure.SwitchForm();
+
+            if (!playerBlewLine) {
+                gameManager.StartNextTurn();
+                selectionFigure.SwitchForm();
+            }
+            playerBlewLine = false;
         });
     }
 
