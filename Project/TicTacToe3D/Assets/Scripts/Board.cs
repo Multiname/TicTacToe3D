@@ -144,6 +144,19 @@ public class Board : MonoBehaviour {
         }
     };
 
+    private enum EnemyFigureBlowingHandleMethod {
+        NO_RESTRICTION,
+        NO_POINTS,
+        NO_BONUS,
+        STEAL_BASE_POINTS,
+        STEAL_ALL_POINTS
+    }
+
+    private readonly Action<int>[] enemyBasePointsGainHandlers = new Action<int>[5];
+    private readonly Action<int>[] enemyBonusPointsGainHandlers = new Action<int>[5];
+
+    [SerializeField] EnemyFigureBlowingHandleMethod enemyFigureBlowingHandleMethod = EnemyFigureBlowingHandleMethod.NO_RESTRICTION;
+
     [SerializeField] FigureSidesBuilder figureSidesBuilder;
     [SerializeField] SelectionFigure selectionFigure;
     [SerializeField] CameraMovement cameraMovement;
@@ -390,6 +403,18 @@ public class Board : MonoBehaviour {
                 detectedLines[(int)t][(int)line3dTranslation[(x + 1) % 3, (z + 1) % 3]].Add(new(0, y-1, 0));
             }
         };
+
+        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_RESTRICTION] = (points) => gainedPoints[(int)gameManager.EnemyPlayer] += points;
+        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_POINTS] = (points) => { };
+        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_BONUS] = (points) => gainedPoints[(int)gameManager.EnemyPlayer] += points;
+        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_BASE_POINTS] = (points) => gainedPoints[(int)gameManager.CurrentPlayer] += points;
+        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_ALL_POINTS] = (points) => gainedPoints[(int)gameManager.CurrentPlayer] += points;
+
+        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_RESTRICTION] = (points) => gainedPoints[(int)gameManager.EnemyPlayer] += points;
+        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_POINTS] = (points) => { };
+        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_BONUS] = (points) => { };
+        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_BASE_POINTS] = (points) => { };
+        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_ALL_POINTS] = (points) => gainedPoints[(int)gameManager.CurrentPlayer] += points;
     }
 
     private void ResetDetectedLines() {
@@ -451,8 +476,13 @@ public class Board : MonoBehaviour {
                     Vector3Int anchor = linesRelativeCoordinates[(int)lineType, 2](x, z, y);
 
                     if (CheckLine(placingState[(int)figureType], coord_0, coord_1, anchor)) {
-                        gainedPoints[(int)figureType] += lineTypeBonusPoints[(int)lineType];
-                        gainedPoints[(int)figureType] += comboCount;
+                        if (figureType == gameManager.CurrentPlayer) {
+                            gainedPoints[(int)figureType] += lineTypeBonusPoints[(int)lineType];
+                            gainedPoints[(int)figureType] += comboCount;
+                        } else {
+                            enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](lineTypeBonusPoints[(int)lineType]);
+                            enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](comboCount);
+                        }
                     }
                 }
             }
@@ -534,8 +564,13 @@ public class Board : MonoBehaviour {
                 CellsShadows.HideShadow(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z);
             }
 
-            ++gainedPoints[(int)figure.Type];
-            gainedPoints[(int)figure.Type] += figure.coordinates.coordinates.y;
+            if (figure.Type == gameManager.CurrentPlayer) {
+                ++gainedPoints[(int)figure.Type];
+                gainedPoints[(int)figure.Type] += figure.coordinates.coordinates.y;
+            } else {
+                enemyBasePointsGainHandlers[(int)enemyFigureBlowingHandleMethod](1);
+                enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](figure.coordinates.coordinates.y);
+            }
 
             if (figure.Type == gameManager.CurrentPlayer) {
                 playerBlewLine = true;
@@ -604,7 +639,11 @@ public class Board : MonoBehaviour {
     private void CheckBlowingAmongFallen() {
         foreach (Figure figure in figuresToBlowSet) {
             if (figuresToFall.Keys.Contains(figure)) {
-                ++gainedPoints[(int)figure.Type];
+                if (figure.Type == gameManager.CurrentPlayer) {
+                    ++gainedPoints[(int)figure.Type];
+                } else {
+                    enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](1);
+                }
             }
         }
     }

@@ -2754,6 +2754,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bbc1a418ebc2dd47858bcc5f9315998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyFigureBlowingHandleMethod: 0
   figureSidesBuilder: {fileID: 591376105}
   selectionFigure: {fileID: 1884768656}
   cameraMovement: {fileID: 1272748989}

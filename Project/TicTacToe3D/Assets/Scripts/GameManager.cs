@@ -2,6 +2,14 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
     public Figure.FigureType CurrentPlayer { get; private set; } = Figure.FigureType.SPHERE;
+    public Figure.FigureType EnemyPlayer {
+        get {
+            if (CurrentPlayer == Figure.FigureType.SPHERE) {
+                return Figure.FigureType.CROSS;
+            }
+            return Figure.FigureType.SPHERE;
+        }
+    }
 
     [SerializeField] UiCanvas uiCanvas;
 
