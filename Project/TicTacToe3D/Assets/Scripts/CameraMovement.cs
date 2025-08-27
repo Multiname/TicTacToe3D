@@ -14,8 +14,10 @@ public class CameraMovement : MonoBehaviour {
     private const float ORTHOGRAPHIC_SIZE_STEP = 0.4f;
     private const float BASE_ORTHOGRAPHIC_SIZE = 1.6f;
 
+    public bool ready = true;
+
     private void Update() {
-        if (Mouse.current.rightButton.isPressed) {
+        if (Mouse.current.rightButton.isPressed && ready) {
             selectionFigure.CameraIsRotating = true;
             transform.Rotate(Mouse.current.delta.x.ReadValue() * rotationSpeed * Vector3.up);
         } else if (Mouse.current.rightButton.wasReleasedThisFrame) {

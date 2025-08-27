@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour {
 
     public void AddPointsToPlayer(Figure.FigureType figureType, int points) {
         playersScores[(int)figureType] += points;
+        return;
         uiCanvas.SetScore(figureType, playersScores[(int)figureType]);
     }
 }

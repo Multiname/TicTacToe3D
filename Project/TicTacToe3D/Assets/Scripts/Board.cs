@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class Board : MonoBehaviour {
@@ -511,7 +512,7 @@ public class Board : MonoBehaviour {
         }
     }
 
-    private void HandleFigureFall(Figure figure, bool fell) {
+    private async void HandleFigureFall(Figure figure, bool fell) {
         int x = figure.coordinates.coordinates.x;
         int z = figure.coordinates.coordinates.z;
         int y = figure.coordinates.coordinates.y;
@@ -528,7 +529,7 @@ public class Board : MonoBehaviour {
         MarkFiguresToFall(figuresToBlowList);
         LogFiguresToFall();
 
-        BlowFigures(figuresToBlowList);
+        await BlowFigures(figuresToBlowList);
         DropFigures();
     }
 
@@ -536,13 +537,9 @@ public class Board : MonoBehaviour {
         figuresToFall.Clear();
 
         foreach (var f in figuresToBlowCollection) {
-            f.gameObject.SetActive(false);
-        }
-
-        foreach (var f in figuresToBlowCollection) {
             for (int y = f.coordinates.coordinates.y + 1; y < cellsHeight[f.coordinates.coordinates.x, f.coordinates.coordinates.z]; ++y) {
                 var figure = placedFigures[f.coordinates.coordinates.x, f.coordinates.coordinates.z, y];
-                if (figure.gameObject.activeSelf) {
+                if (!figuresToBlowCollection.Contains(figure)) {
                     if (figuresToFall.ContainsKey(figure)) {
                         figuresToFall[figure]--;
                     } else {
@@ -555,7 +552,13 @@ public class Board : MonoBehaviour {
         figuresToFallCount = figuresToFall.Count;
     }
 
-    private void BlowFigures(ICollection<Figure> figuresToBlowCollection) {
+    private async UniTask BlowFigures(ICollection<Figure> figuresToBlowCollection) {
+        selectionFigure.ParticleEffectIsPlaying = true;
+        cameraMovement.ready = false;
+        await uiCanvas.GainBasePoints(figuresToBlowCollection);
+        selectionFigure.ParticleEffectIsPlaying = false;
+        cameraMovement.ready = true;
+
         foreach (var figure in figuresToBlowCollection) {
             int newHeight = --cellsHeight[figure.coordinates.coordinates.x, figure.coordinates.coordinates.z];
             LogCellsHeight();
@@ -608,7 +611,7 @@ public class Board : MonoBehaviour {
         }
     }
 
-    private void HandleFiguresFall() {
+    private async void HandleFiguresFall() {
         figuresToFallCount--;
         if (figuresToFallCount > 0) {
             return;
@@ -632,7 +635,7 @@ public class Board : MonoBehaviour {
         ResetDetectedLines();
         MarkFiguresToFall(figuresToBlowSet);
 
-        BlowFigures(figuresToBlowSet);
+        await BlowFigures(figuresToBlowSet);
         DropFigures();
     }
 
