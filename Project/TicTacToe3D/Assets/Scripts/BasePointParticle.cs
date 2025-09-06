@@ -11,8 +11,11 @@ public class BasePointParticle : MonoBehaviour {
     [SerializeField] float pauseDuration = 1.0f;
 
     [SerializeField] Image image;
+    [SerializeField] RectTransform trailEffectPrefab;
 
     private RectTransform rt;
+    private RectTransform trailEffect;
+
     private float scaleStep;
 
     private void Awake() {
@@ -25,8 +28,12 @@ public class BasePointParticle : MonoBehaviour {
         image.transform.Rotate(new Vector3(0, 0, rotationSpeed * Time.deltaTime));
     }
 
-    public async UniTask Appear(Vector2 startPosition, Vector2 targetPosition, Action callback) {
+    public async UniTask Appear(Vector2 startPosition, Vector2 targetPosition, RectTransform cameraCanvas, Action callback) {
         rt.anchoredPosition = startPosition;
+
+        trailEffect = Instantiate(trailEffectPrefab, cameraCanvas);
+        trailEffect.anchoredPosition = rt.anchoredPosition;
+
         transform.localScale = initialMagnification * Vector3.one;
 
         while (image.color.a < 1.0f) {
@@ -49,10 +56,12 @@ public class BasePointParticle : MonoBehaviour {
         while (Vector3.Distance(rt.anchoredPosition, targetPosition) > 10.0f) {
             speed += particleAcceleration;
             rt.anchoredPosition += speed * Time.deltaTime * direction;
+            trailEffect.anchoredPosition = rt.anchoredPosition;
             await UniTask.Yield();
         }
 
         callback();
+        Destroy(trailEffect.gameObject);
         Destroy(gameObject);
     }
 }

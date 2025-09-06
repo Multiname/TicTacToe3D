@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class UiCanvas : MonoBehaviour {
     [SerializeField] GameManager gameManager;
+    [SerializeField] RectTransform cameraCanvas;
 
     [SerializeField] TextMeshProUGUI sphereScore;
     [SerializeField] TextMeshProUGUI crossScore;
@@ -82,10 +83,10 @@ public class UiCanvas : MonoBehaviour {
 
             if (figure.Type == Figure.FigureType.SPHERE) {
                 var particle = Instantiate(sphereBasePointParticlePrefab, transform);
-                particleTasks.Add(particle.Appear(anchoredPosition, sphereBasePointsIconPosition, () => ++SphereGainedBasePoints));
+                particleTasks.Add(particle.Appear(anchoredPosition, sphereBasePointsIconPosition, cameraCanvas, () => ++SphereGainedBasePoints));
             } else {
                 var particle = Instantiate(crossBasePointParticlePrefab, transform);
-                particleTasks.Add(particle.Appear(anchoredPosition, crossBasePointsIconPosition, () => ++CrossGainedBasePoints));
+                particleTasks.Add(particle.Appear(anchoredPosition, crossBasePointsIconPosition, cameraCanvas, () => ++CrossGainedBasePoints));
             }
         }
 
