@@ -27,7 +27,7 @@ public class SelectionFigure : MonoBehaviour {
         FiguresFall = 1,
         CameraIsRotating = 2,
         CameraIsInTransition = 4,
-        ParticleEffectIsPlaying = 8
+        EffectIsPlaying = 8
     }
     private DisablingActions readinessState = DisablingActions.ReadyToPlace;
 
@@ -43,8 +43,8 @@ public class SelectionFigure : MonoBehaviour {
     public bool CameraIsInTransition {
         set => SetDisablingActionsFlag(DisablingActions.CameraIsInTransition, value);
     }
-    public bool ParticleEffectIsPlaying {
-        set => SetDisablingActionsFlag(DisablingActions.ParticleEffectIsPlaying, value);
+    public bool EffectIsPlaying {
+        set => SetDisablingActionsFlag(DisablingActions.EffectIsPlaying, value);
     }
     private void SetDisablingActionsFlag(DisablingActions flag, bool active) {
         if (active) {

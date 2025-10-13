@@ -13,6 +13,12 @@ public class Board : MonoBehaviour {
     private const int LINE_2D_BONUS_POINTS = 1;
     private const int LINE_3D_BONUS_POINTS = 2;
 
+    private enum LineDimension {
+        LINE_1D,
+        LINE_2D,
+        LINE_3D
+    }
+
     private enum LineType {
         LINE_1D_X,
         LINE_1D_Z,
@@ -29,22 +35,30 @@ public class Board : MonoBehaviour {
         LINE_3D_X1_Z1
     }
 
-    private readonly int[] lineTypeBonusPoints = new int[NUMBER_OF_LINE_TYPES] {
+    private readonly int[] lineDimensionsBonusPoints = new int[3] {
         LINE_1D_BONUS_POINTS,
-        LINE_1D_BONUS_POINTS,
-        LINE_1D_BONUS_POINTS,
-
         LINE_2D_BONUS_POINTS,
-        LINE_2D_BONUS_POINTS,
-        LINE_2D_BONUS_POINTS,
-        LINE_2D_BONUS_POINTS,
-        LINE_2D_BONUS_POINTS,
-        LINE_2D_BONUS_POINTS,
-
-        LINE_3D_BONUS_POINTS,
-        LINE_3D_BONUS_POINTS,
-        LINE_3D_BONUS_POINTS,
         LINE_3D_BONUS_POINTS
+    };
+
+    private readonly int[][] lineDimensionGainedBonusPoints = new int[3][];
+
+    private readonly LineDimension[] lineTypeDimensions = new LineDimension[NUMBER_OF_LINE_TYPES] {
+        LineDimension.LINE_1D,
+        LineDimension.LINE_1D,
+        LineDimension.LINE_1D,
+
+        LineDimension.LINE_2D,
+        LineDimension.LINE_2D,
+        LineDimension.LINE_2D,
+        LineDimension.LINE_2D,
+        LineDimension.LINE_2D,
+        LineDimension.LINE_2D,
+
+        LineDimension.LINE_3D,
+        LineDimension.LINE_3D,
+        LineDimension.LINE_3D,
+        LineDimension.LINE_3D
     };
 
     private readonly LineType[] line2dYTranslation = new LineType[2] {
@@ -77,9 +91,9 @@ public class Board : MonoBehaviour {
         },
         // LINE_1D_Y
         {
-            (x, z, y) => new(x, y - 1, z),
+            (x, z, y) => new(x, y, z),
             (x, z, y) => new(x, y - 2, z),
-            (x, z, y) => new(x, y, z)
+            (x, z, y) => new(x, y - 1, z)
         },
 
         // LINE_2D_X_ASC
@@ -154,15 +168,16 @@ public class Board : MonoBehaviour {
     }
 
     private readonly Action<int>[] enemyBasePointsGainHandlers = new Action<int>[5];
-    private readonly Action<int>[] enemyBonusPointsGainHandlers = new Action<int>[5];
+    private readonly Action<int, int[]>[] enemyBonusPointsGainHandlers = new Action<int, int[]>[5];
 
     [SerializeField] EnemyFigureBlowingHandleMethod enemyFigureBlowingHandleMethod = EnemyFigureBlowingHandleMethod.NO_RESTRICTION;
 
     [SerializeField] FigureSidesBuilder figureSidesBuilder;
     [SerializeField] SelectionFigure selectionFigure;
     [SerializeField] CameraMovement cameraMovement;
-    [SerializeField] UiCanvas uiCanvas;
     [SerializeField] GameManager gameManager;
+    [SerializeField] PointsEffector pointsEffector;
+    [SerializeField] BonusTurnEffect bonusTurnEffect;
 
     [SerializeField] Figure[] figurePrefabs = new Figure[Figure.NUMBER_OF_FIGURE_TYPES];
 
@@ -183,6 +198,12 @@ public class Board : MonoBehaviour {
     private int figuresToFallCount = 0;
 
     private readonly int[] gainedPoints = new int[Figure.NUMBER_OF_FIGURE_TYPES];
+    public readonly int[] gainedBasePoints = new int[Figure.NUMBER_OF_FIGURE_TYPES];
+    public readonly int[] gained2DPoints = new int[Figure.NUMBER_OF_FIGURE_TYPES];
+    public readonly int[] gained3DPoints = new int[Figure.NUMBER_OF_FIGURE_TYPES];
+    public readonly int[] gainedFallPoints = new int[Figure.NUMBER_OF_FIGURE_TYPES];
+    public readonly int[] gainedHeightPoints = new int[Figure.NUMBER_OF_FIGURE_TYPES];
+    public readonly int[] gainedComboPoints = new int[Figure.NUMBER_OF_FIGURE_TYPES];
     private bool playerBlewLine = false;
     private int comboCount = 1;
 
@@ -258,14 +279,31 @@ public class Board : MonoBehaviour {
     private void Start() {
         ResetDetectedLines();
 
-        Action<int, int, int, int, int, int, int> buildCheckLineForSingleFigureLineFinder(Figure.FigureType figureType) {
-            return (x_0, z_0, y_0, x_1, z_1, y_1, bonusPoints) => {
+        Action<int, int, int, int, int, int, bool, LineDimension> buildLineCheckerForSingleFigure(Figure.FigureType figureType, Figure placedFigure) {
+            return (x_0, z_0, y_0, x_1, z_1, y_1, anchorIsFirst, lineDimension) => {
                 if (CheckLine(
                     placingState[(int)figureType],
                     x_0, z_0, y_0,
                     x_1, z_1, y_1
                 )) {
-                    gainedPoints[(int)figureType] += bonusPoints;
+                    if (lineDimension != LineDimension.LINE_1D) {
+                        gainedPoints[(int)figureType] += lineDimensionsBonusPoints[(int)lineDimension];
+                        lineDimensionGainedBonusPoints[(int)lineDimension][(int)figureType] += lineDimensionsBonusPoints[(int)lineDimension];
+                    }
+
+                    if (anchorIsFirst) {
+                        pointsEffector.AddLine(new Figure[] {
+                            placedFigures[x_1, z_1, y_1],
+                            placedFigures[x_0, z_0, y_0],
+                            placedFigure
+                        });
+                    } else {
+                        pointsEffector.AddLine(new Figure[] {
+                            placedFigures[x_0, z_0, y_0],
+                            placedFigure,
+                            placedFigures[x_1, z_1, y_1]
+                        });
+                    }
                 }
             };
         }
@@ -275,23 +313,23 @@ public class Board : MonoBehaviour {
                 int y_m = y - 1;
                 int y_p = y + 1;
 
-                var checkLine = buildCheckLineForSingleFigureLineFinder(t);
+                var checkLine = buildLineCheckerForSingleFigure(t, placedFigures[x, z, y]);
 
-                checkLine(0, 1, y, 2, 1, y, LINE_1D_BONUS_POINTS);
-                checkLine(1, 0, y, 1, 2, y, LINE_1D_BONUS_POINTS);
-                checkLine(1, 1, y_m, 1, 1, y-2, LINE_1D_BONUS_POINTS);
+                checkLine(0, 1, y, 2, 1, y, false, LineDimension.LINE_1D);
+                checkLine(1, 0, y, 1, 2, y, false, LineDimension.LINE_1D);
+                checkLine(1, 1, y_m, 1, 1, y-2, true, LineDimension.LINE_1D);
 
-                checkLine(0, 1, y_p, 2, 1, y_m, LINE_2D_BONUS_POINTS);
-                checkLine(0, 1, y_m, 2, 1, y_p, LINE_2D_BONUS_POINTS);
-                checkLine(1, 0, y_p, 1, 2, y_m, LINE_2D_BONUS_POINTS);
-                checkLine(1, 0, y_m, 1, 2, y_p, LINE_2D_BONUS_POINTS);
-                checkLine(0, 0, y, 2, 2, y, LINE_2D_BONUS_POINTS);
-                checkLine(0, 2, y, 2, 0, y, LINE_2D_BONUS_POINTS);
+                checkLine(0, 1, y_p, 2, 1, y_m, false, LineDimension.LINE_2D);
+                checkLine(0, 1, y_m, 2, 1, y_p, false, LineDimension.LINE_2D);
+                checkLine(1, 0, y_p, 1, 2, y_m, false, LineDimension.LINE_2D);
+                checkLine(1, 0, y_m, 1, 2, y_p, false, LineDimension.LINE_2D);
+                checkLine(0, 0, y, 2, 2, y, false, LineDimension.LINE_2D);
+                checkLine(0, 2, y, 2, 0, y, false, LineDimension.LINE_2D);
 
-                checkLine(0, 0, y_m, 2, 2, y_p, LINE_3D_BONUS_POINTS);
-                checkLine(0, 0, y_p, 2, 2, y_m, LINE_3D_BONUS_POINTS);
-                checkLine(0, 2, y_m, 2, 0, y_p, LINE_3D_BONUS_POINTS);
-                checkLine(0, 2, y_p, 2, 0, y_m, LINE_3D_BONUS_POINTS);
+                checkLine(0, 0, y_m, 2, 2, y_p, false, LineDimension.LINE_3D);
+                checkLine(0, 0, y_p, 2, 2, y_m, false, LineDimension.LINE_3D);
+                checkLine(0, 2, y_m, 2, 0, y_p, false, LineDimension.LINE_3D);
+                checkLine(0, 2, y_p, 2, 0, y_m, false, LineDimension.LINE_3D);
 
                 if (figuresToBlowList.Count > 0) {
                     figuresToBlowList.Add(placedFigures[x, z, y]);
@@ -310,16 +348,16 @@ public class Board : MonoBehaviour {
                 int y_p = y + 1;
                 int y_m_2 = y - 2;
 
-                var checkLine = buildCheckLineForSingleFigureLineFinder(t);
+                var checkLine = buildLineCheckerForSingleFigure(t, placedFigures[x, z, y]);
 
-                checkLine(x_m_z, z_m_x, y, x_p_z, z_p_x, y, LINE_1D_BONUS_POINTS);
-                checkLine(1, 1, y, abs_x, abs_z, y, LINE_1D_BONUS_POINTS);
-                checkLine(x, z, y_m, x, z, y_m_2, LINE_1D_BONUS_POINTS);
+                checkLine(x_m_z, z_m_x, y, x_p_z, z_p_x, y, false, LineDimension.LINE_1D);
+                checkLine(1, 1, y, abs_x, abs_z, y, true, LineDimension.LINE_1D);
+                checkLine(x, z, y_m, x, z, y_m_2, true, LineDimension.LINE_1D);
 
-                checkLine(x_m_z, z_m_x, y_m, x_p_z, z_p_x, y_p, LINE_2D_BONUS_POINTS);
-                checkLine(x_m_z, z_m_x, y_p, x_p_z, z_p_x, y_m, LINE_2D_BONUS_POINTS);
-                checkLine(1, 1, y_p, abs_x, abs_z, y+2, LINE_2D_BONUS_POINTS);
-                checkLine(1, 1, y_m, abs_x, abs_z, y_m_2, LINE_2D_BONUS_POINTS);
+                checkLine(x_m_z, z_m_x, y_m, x_p_z, z_p_x, y_p, false, LineDimension.LINE_2D);
+                checkLine(x_m_z, z_m_x, y_p, x_p_z, z_p_x, y_m, false, LineDimension.LINE_2D);
+                checkLine(1, 1, y_p, abs_x, abs_z, y+2, true, LineDimension.LINE_2D);
+                checkLine(1, 1, y_m, abs_x, abs_z, y_m_2, true, LineDimension.LINE_2D);
 
                 if (figuresToBlowList.Count > 0) {
                     figuresToBlowList.Add(placedFigures[x, z, y]);
@@ -334,20 +372,20 @@ public class Board : MonoBehaviour {
                 int y_m_2 = y - 2;
                 int y_p_2 = y + 2;
 
-                var checkLine = buildCheckLineForSingleFigureLineFinder(t);
+                var checkLine = buildLineCheckerForSingleFigure(t, placedFigures[x, z, y]);
 
-                checkLine(abs_x, z, y, 1, z, y, LINE_1D_BONUS_POINTS);
-                checkLine(x, abs_z, y, x, 1, y, LINE_1D_BONUS_POINTS);
-                checkLine(x, z, y_m, x, z, y_m_2, LINE_1D_BONUS_POINTS);
+                checkLine(1, z, y, abs_x, z, y, true, LineDimension.LINE_1D);
+                checkLine(x, 1, y, x, abs_z, y, true, LineDimension.LINE_1D);
+                checkLine(x, z, y_m, x, z, y_m_2, true, LineDimension.LINE_1D);
 
-                checkLine(abs_x, z, y_p_2, 1, z, y_p, LINE_2D_BONUS_POINTS);
-                checkLine(abs_x, z, y_m_2, 1, z, y_m, LINE_2D_BONUS_POINTS);
-                checkLine(x, abs_z, y_p_2, x, 1, y_p, LINE_2D_BONUS_POINTS);
-                checkLine(x, abs_z, y_m_2, x, 1, y_m, LINE_2D_BONUS_POINTS);
-                checkLine(abs_x, abs_z, y, 1, 1, y, LINE_2D_BONUS_POINTS);
+                checkLine(1, z, y_p, abs_x, z, y_p_2, true, LineDimension.LINE_2D);
+                checkLine(1, z, y_m, abs_x, z, y_m_2, true, LineDimension.LINE_2D);
+                checkLine(x, 1, y_p, x, abs_z, y_p_2, true, LineDimension.LINE_2D);
+                checkLine(x, 1, y_m, x, abs_z, y_m_2, true, LineDimension.LINE_2D);
+                checkLine(1, 1, y, abs_x, abs_z, y, true, LineDimension.LINE_2D);
 
-                checkLine(abs_x, abs_z, y_p_2, 1, 1, y_p, LINE_3D_BONUS_POINTS);
-                checkLine(abs_x, abs_z, y_m_2, 1, 1, y_m, LINE_3D_BONUS_POINTS);
+                checkLine(1, 1, y_p, abs_x, abs_z, y_p_2, true, LineDimension.LINE_3D);
+                checkLine(1, 1, y_m, abs_x, abs_z, y_m_2, true, LineDimension.LINE_3D);
 
                 if (figuresToBlowList.Count > 0) {
                     figuresToBlowList.Add(placedFigures[x, z, y]);
@@ -405,17 +443,39 @@ public class Board : MonoBehaviour {
             }
         };
 
-        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_RESTRICTION] = (points) => gainedPoints[(int)gameManager.EnemyPlayer] += points;
+        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_RESTRICTION] = (points) => {
+            gainedPoints[(int)gameManager.EnemyPlayer] += points;
+            gainedBasePoints[(int)gameManager.EnemyPlayer] += points;
+        };
         enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_POINTS] = (points) => { };
-        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_BONUS] = (points) => gainedPoints[(int)gameManager.EnemyPlayer] += points;
-        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_BASE_POINTS] = (points) => gainedPoints[(int)gameManager.CurrentPlayer] += points;
-        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_ALL_POINTS] = (points) => gainedPoints[(int)gameManager.CurrentPlayer] += points;
+        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_BONUS] = (points) => {
+            gainedPoints[(int)gameManager.EnemyPlayer] += points;
+            gainedBasePoints[(int)gameManager.EnemyPlayer] += points;
+        };
+        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_BASE_POINTS] = (points) => {
+            gainedPoints[(int)gameManager.CurrentPlayer] += points;
+            gainedBasePoints[(int)gameManager.CurrentPlayer] += points;
+        };
+        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_ALL_POINTS] = (points) => {
+            gainedPoints[(int)gameManager.CurrentPlayer] += points;
+            gainedBasePoints[(int)gameManager.CurrentPlayer] += points;
+        };
 
-        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_RESTRICTION] = (points) => gainedPoints[(int)gameManager.EnemyPlayer] += points;
-        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_POINTS] = (points) => { };
-        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_BONUS] = (points) => { };
-        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_BASE_POINTS] = (points) => { };
-        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_ALL_POINTS] = (points) => gainedPoints[(int)gameManager.CurrentPlayer] += points;
+        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_RESTRICTION] = (points, gainedBonusPoints) => {
+            gainedPoints[(int)gameManager.EnemyPlayer] += points;
+            gainedBonusPoints[(int)gameManager.EnemyPlayer] += points;
+        };
+        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_POINTS] = (points, gainedBonusPoints) => { };
+        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_BONUS] = (points, gainedBonusPoints) => { };
+        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_BASE_POINTS] = (points, gainedBonusPoints) => { };
+        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_ALL_POINTS] = (points, gainedBonusPoints) => {
+            gainedPoints[(int)gameManager.CurrentPlayer] += points;
+            gainedBonusPoints[(int)gameManager.CurrentPlayer] += points;
+        };
+
+        lineDimensionGainedBonusPoints[(int)LineDimension.LINE_1D] = null;
+        lineDimensionGainedBonusPoints[(int)LineDimension.LINE_2D] = gained2DPoints;
+        lineDimensionGainedBonusPoints[(int)LineDimension.LINE_3D] = gained3DPoints;
     }
 
     private void ResetDetectedLines() {
@@ -465,9 +525,12 @@ public class Board : MonoBehaviour {
     private void CheckDetectedLines() {
         for (Figure.FigureType figureType = 0; (int)figureType < Figure.NUMBER_OF_FIGURE_TYPES; ++figureType) {
             HashSet<Vector3Int>[] lines = detectedLines[(int)figureType];
+            bool foundLine = false;
 
             for (LineType lineType = 0; (int)lineType < NUMBER_OF_LINE_TYPES; ++lineType) {
                 foreach (Vector3Int lineAnchor in lines[(int)lineType]) {
+                    foundLine = true;
+
                     int x = lineAnchor.x;
                     int z = lineAnchor.z;
                     int y = lineAnchor.y;
@@ -477,14 +540,42 @@ public class Board : MonoBehaviour {
                     Vector3Int anchor = linesRelativeCoordinates[(int)lineType, 2](x, z, y);
 
                     if (CheckLine(placingState[(int)figureType], coord_0, coord_1, anchor)) {
+                        LineDimension lineDimension = lineTypeDimensions[(int)lineType];
+                        int lineDimensionBonusPoints = lineDimensionsBonusPoints[(int)lineDimension];
                         if (figureType == gameManager.CurrentPlayer) {
-                            gainedPoints[(int)figureType] += lineTypeBonusPoints[(int)lineType];
+                            if (lineDimension != LineDimension.LINE_1D) {
+                                gainedPoints[(int)figureType] += lineDimensionBonusPoints;
+                                lineDimensionGainedBonusPoints[(int)lineDimension][(int)figureType] += lineDimensionBonusPoints;
+                            }
+
                             gainedPoints[(int)figureType] += comboCount;
                         } else {
-                            enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](lineTypeBonusPoints[(int)lineType]);
-                            enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](comboCount);
+                            if (lineDimension != LineDimension.LINE_1D) {
+                                enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](lineDimensionBonusPoints, lineDimensionGainedBonusPoints[(int)lineDimension]);
+                            }
+
+                            enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](comboCount, new int[2]);
                         }
+
+                        pointsEffector.AddLine(new Figure[] {
+                            placedFigures[coord_0.x, coord_0.z, coord_0.y],
+                            placedFigures[anchor.x, anchor.z, anchor.y],
+                            placedFigures[coord_1.x, coord_1.z, coord_1.y]
+                        });
+
+                        pointsEffector.TryToAddHeightPoint(placedFigures[coord_0.x, coord_0.z, coord_0.y]);
+                        pointsEffector.TryToAddHeightPoint(placedFigures[anchor.x, anchor.z, anchor.y]);
+                        pointsEffector.TryToAddHeightPoint(placedFigures[coord_1.x, coord_1.z, coord_1.y]);
                     }
+                }
+            }
+
+            if (foundLine) {
+                if (figureType == gameManager.CurrentPlayer) {
+                    gainedPoints[(int)figureType] += comboCount;
+                    gainedComboPoints[(int)figureType] += comboCount;
+                } else {
+                    enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](comboCount, gainedComboPoints);
                 }
             }
         }
@@ -524,6 +615,8 @@ public class Board : MonoBehaviour {
 
         if (fell && figuresToBlowList.Contains(figure)) {
             ++gainedPoints[(int)figure.Type];
+            ++gainedFallPoints[(int)figure.Type];
+            pointsEffector.AddFallPoint(figure);
         }
 
         MarkFiguresToFall(figuresToBlowList);
@@ -553,11 +646,35 @@ public class Board : MonoBehaviour {
     }
 
     private async UniTask BlowFigures(ICollection<Figure> figuresToBlowCollection) {
-        selectionFigure.ParticleEffectIsPlaying = true;
-        cameraMovement.ready = false;
-        await uiCanvas.GainBasePoints(figuresToBlowCollection);
-        selectionFigure.ParticleEffectIsPlaying = false;
-        cameraMovement.ready = true;
+        foreach (var figure in figuresToBlowCollection) {
+            if (figure.Type == gameManager.CurrentPlayer) {
+                ++gainedPoints[(int)figure.Type];
+                ++gainedBasePoints[(int)figure.Type];
+
+                gainedPoints[(int)figure.Type] += figure.coordinates.coordinates.y;
+                gainedHeightPoints[(int)figure.Type] += figure.coordinates.coordinates.y;
+            } else {
+                enemyBasePointsGainHandlers[(int)enemyFigureBlowingHandleMethod](1);
+                enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](figure.coordinates.coordinates.y, gainedHeightPoints);
+            }
+
+            pointsEffector.TryToAddHeightPoint(figure);
+        }
+
+        if (figuresToBlowCollection.Count > 0) {
+            selectionFigure.EffectIsPlaying = true;
+            await pointsEffector.StartEffects();
+            selectionFigure.EffectIsPlaying = false;
+        }
+
+        for (int i = 0; i < Figure.NUMBER_OF_FIGURE_TYPES; ++i) {
+            gainedBasePoints[i] = 0;
+            gained2DPoints[i] = 0;
+            gained3DPoints[i] = 0;
+            gainedFallPoints[i] = 0;
+            gainedHeightPoints[i] = 0;
+            gainedComboPoints[i] = 0;
+        }
 
         foreach (var figure in figuresToBlowCollection) {
             int newHeight = --cellsHeight[figure.coordinates.coordinates.x, figure.coordinates.coordinates.z];
@@ -565,14 +682,6 @@ public class Board : MonoBehaviour {
 
             if (newHeight == 0) {
                 CellsShadows.HideShadow(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z);
-            }
-
-            if (figure.Type == gameManager.CurrentPlayer) {
-                ++gainedPoints[(int)figure.Type];
-                gainedPoints[(int)figure.Type] += figure.coordinates.coordinates.y;
-            } else {
-                enemyBasePointsGainHandlers[(int)enemyFigureBlowingHandleMethod](1);
-                enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](figure.coordinates.coordinates.y);
             }
 
             if (figure.Type == gameManager.CurrentPlayer) {
@@ -644,9 +753,12 @@ public class Board : MonoBehaviour {
             if (figuresToFall.Keys.Contains(figure)) {
                 if (figure.Type == gameManager.CurrentPlayer) {
                     ++gainedPoints[(int)figure.Type];
+                    ++gainedFallPoints[(int)figure.Type];
                 } else {
-                    enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](1);
+                    enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](1, gainedFallPoints);
                 }
+
+                pointsEffector.AddFallPoint(figure);
             }
         }
     }
@@ -690,14 +802,15 @@ public class Board : MonoBehaviour {
         comboCount = 1;
 
         selectionFigure.CameraIsInTransition = true;
-        cameraMovement.UpdateFieldOfView(GetCurrentMaxHeight(), () => {
-            selectionFigure.CameraIsInTransition = false;
-
+        cameraMovement.UpdateFieldOfView(GetCurrentMaxHeight(), async () => {
             if (!playerBlewLine) {
                 gameManager.StartNextTurn();
                 selectionFigure.SwitchForm();
+            } else {
+                await bonusTurnEffect.StartEffect(gameManager.CurrentPlayer);
+                playerBlewLine = false;
             }
-            playerBlewLine = false;
+            selectionFigure.CameraIsInTransition = false;
         });
     }
 

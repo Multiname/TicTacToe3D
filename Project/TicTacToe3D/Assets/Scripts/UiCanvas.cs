@@ -1,95 +1,98 @@
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
 public class UiCanvas : MonoBehaviour {
-    [SerializeField] GameManager gameManager;
-    [SerializeField] RectTransform cameraCanvas;
+    [SerializeField] Board board;
 
-    [SerializeField] TextMeshProUGUI sphereScore;
-    [SerializeField] TextMeshProUGUI crossScore;
+    [SerializeField] TextMeshProUGUI[] scoreTexts = new TextMeshProUGUI[Figure.NUMBER_OF_FIGURE_TYPES];
 
-    [SerializeField] RectTransform sphereBasePointsIcon;
-    [SerializeField] RectTransform crossBasePointsIcon;
+    [SerializeField] TextMeshProUGUI[] basePointsTexts = new TextMeshProUGUI[Figure.NUMBER_OF_FIGURE_TYPES];
+    [SerializeField] GameObject[] basePointsContainers = new GameObject[Figure.NUMBER_OF_FIGURE_TYPES];
 
-    [SerializeField] TextMeshProUGUI sphereBasePointsText;
-    [SerializeField] TextMeshProUGUI crossBasePointsText;
+    [SerializeField] TextMeshProUGUI[] points2DTexts = new TextMeshProUGUI[Figure.NUMBER_OF_FIGURE_TYPES];
+    [SerializeField] GameObject[] points2DContainers = new GameObject[Figure.NUMBER_OF_FIGURE_TYPES];
 
-    [SerializeField] BasePointParticle sphereBasePointParticlePrefab;
-    [SerializeField] BasePointParticle crossBasePointParticlePrefab;
+    [SerializeField] TextMeshProUGUI[] points3DTexts = new TextMeshProUGUI[Figure.NUMBER_OF_FIGURE_TYPES];
+    [SerializeField] GameObject[] points3DContainers = new GameObject[Figure.NUMBER_OF_FIGURE_TYPES];
 
-    private RectTransform rt;
-    private Vector2 sphereBasePointsIconPosition;
-    private Vector2 crossBasePointsIconPosition;
+    [SerializeField] TextMeshProUGUI[] fallPointsTexts = new TextMeshProUGUI[Figure.NUMBER_OF_FIGURE_TYPES];
+    [SerializeField] GameObject[] fallPointsContainers = new GameObject[Figure.NUMBER_OF_FIGURE_TYPES];
 
-    private int _sphereGainedBasePoints = 0;
-    private int SphereGainedBasePoints {
-        get => _sphereGainedBasePoints;
-        set {
-            _sphereGainedBasePoints = value;
-            sphereBasePointsText.text = _sphereGainedBasePoints.ToString();
-        }
-    }
+    [SerializeField] TextMeshProUGUI[] heightPointsTexts = new TextMeshProUGUI[Figure.NUMBER_OF_FIGURE_TYPES];
+    [SerializeField] GameObject[] heightPointsContainers = new GameObject[Figure.NUMBER_OF_FIGURE_TYPES];
 
-    private int _crossGainedBasePoints = 0;
-    private int CrossGainedBasePoints {
-        get => _crossGainedBasePoints;
-        set {
-            _crossGainedBasePoints = value;
-            crossBasePointsText.text = _crossGainedBasePoints.ToString();
-        }
-    }
+    [SerializeField] TextMeshProUGUI[] comboPointsTexts = new TextMeshProUGUI[Figure.NUMBER_OF_FIGURE_TYPES];
+    [SerializeField] GameObject[] comboPointsContainers = new GameObject[Figure.NUMBER_OF_FIGURE_TYPES];
 
-    private void Start() {
-        rt = GetComponent<RectTransform>();
+    private readonly int[] currentScores = new int[Figure.NUMBER_OF_FIGURE_TYPES];
+    private readonly int[] upcomingScores = new int[Figure.NUMBER_OF_FIGURE_TYPES];
+    private readonly List<GameObject> upcomingPointsContainers = new();
 
-        Canvas.ForceUpdateCanvases();
-
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            rt,
-            RectTransformUtility.WorldToScreenPoint(Camera.main, sphereBasePointsIcon.position) + sphereBasePointsIcon.rect.center,
-            Camera.main,
-            out sphereBasePointsIconPosition
-        );
-
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            rt,
-            RectTransformUtility.WorldToScreenPoint(Camera.main, crossBasePointsIcon.position) + crossBasePointsIcon.rect.center,
-            Camera.main,
-            out crossBasePointsIconPosition
-        );
-    }
-
-    public void SetScore(Figure.FigureType figureType, int score) {
-        if (figureType == Figure.FigureType.SPHERE) {
-            sphereScore.text = score.ToString();
-        } else {
-            crossScore.text = score.ToString();
-        }
-    }
-
-    public async UniTask GainBasePoints(ICollection<Figure> blewFigures) {
-        var particleTasks = new List<UniTask>();
-
-        foreach (var figure in blewFigures) {
-            Vector3 screenPoint = Camera.main.WorldToScreenPoint(figure.transform.position + 0.85f / 2 * Vector3.up);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                rt,
-                screenPoint,
-                Camera.main,
-                out Vector2 anchoredPosition
-            );
-
-            if (figure.Type == Figure.FigureType.SPHERE) {
-                var particle = Instantiate(sphereBasePointParticlePrefab, transform);
-                particleTasks.Add(particle.Appear(anchoredPosition, sphereBasePointsIconPosition, cameraCanvas, () => ++SphereGainedBasePoints));
-            } else {
-                var particle = Instantiate(crossBasePointParticlePrefab, transform);
-                particleTasks.Add(particle.Appear(anchoredPosition, crossBasePointsIconPosition, cameraCanvas, () => ++CrossGainedBasePoints));
+    private void PreparePoints(int[] gainedPoints, TextMeshProUGUI[] pointsTexts, GameObject[] pointsContainers) {
+        for (int type = 0; type < Figure.NUMBER_OF_FIGURE_TYPES; ++type) {
+            if (gainedPoints[type] > 0) {
+                pointsTexts[type].text = gainedPoints[type].ToString();
+                upcomingPointsContainers.Add(pointsContainers[type]);
+                upcomingScores[type] += gainedPoints[type];
             }
         }
+    }
 
-        await UniTask.WhenAll(particleTasks);
+    public void PrepareBasePoints() {
+        PreparePoints(board.gainedBasePoints, basePointsTexts, basePointsContainers);
+        PrepareComboPoints();
+    }
+
+    public void Prepare2DPoints() {
+        PreparePoints(board.gained2DPoints, points2DTexts, points2DContainers);
+    }
+
+    public void Prepare3DPoints() {
+        PreparePoints(board.gained3DPoints, points3DTexts, points3DContainers);
+    }
+
+    public void PrepareFallPoints() {
+        PreparePoints(board.gainedFallPoints, fallPointsTexts, fallPointsContainers);
+    }
+
+    public void PrepareHeightPoints() {
+        PreparePoints(board.gainedHeightPoints, heightPointsTexts, heightPointsContainers);
+    }
+
+    private void PrepareComboPoints() {
+        PreparePoints(board.gainedComboPoints, comboPointsTexts, comboPointsContainers);
+    }
+
+    public void SetNewPointsVisibility(bool visibility) {
+        upcomingPointsContainers.ForEach(c => c.SetActive(visibility));
+        if (visibility) {
+            for (Figure.FigureType type = 0; (int)type < Figure.NUMBER_OF_FIGURE_TYPES; ++type) {
+                scoreTexts[(int)type].text = upcomingScores[(int)type].ToString();
+            }
+        } else {
+            for (Figure.FigureType type = 0; (int)type < Figure.NUMBER_OF_FIGURE_TYPES; ++type) {
+                scoreTexts[(int)type].text = currentScores[(int)type].ToString();
+            }
+        }
+    }
+
+    public void AcceptNewPoints() {
+        SetNewPointsVisibility(true);
+        for (Figure.FigureType type = 0; (int)type < Figure.NUMBER_OF_FIGURE_TYPES; ++type) {
+            currentScores[(int)type] = upcomingScores[(int)type];
+        }
+        upcomingPointsContainers.Clear();
+    }
+
+    public void HidePointsContainers() {
+        for (Figure.FigureType type = 0; (int)type < Figure.NUMBER_OF_FIGURE_TYPES; ++type) {
+            basePointsContainers[(int)type].SetActive(false);
+            points2DContainers[(int)type].SetActive(false);
+            points3DContainers[(int)type].SetActive(false);
+            fallPointsContainers[(int)type].SetActive(false);
+            heightPointsContainers[(int)type].SetActive(false);
+            comboPointsContainers[(int)type].SetActive(false);
+        }
     }
 }
