@@ -529,8 +529,6 @@ public class Board : MonoBehaviour {
 
             for (LineType lineType = 0; (int)lineType < NUMBER_OF_LINE_TYPES; ++lineType) {
                 foreach (Vector3Int lineAnchor in lines[(int)lineType]) {
-                    foundLine = true;
-
                     int x = lineAnchor.x;
                     int z = lineAnchor.z;
                     int y = lineAnchor.y;
@@ -540,6 +538,8 @@ public class Board : MonoBehaviour {
                     Vector3Int anchor = linesRelativeCoordinates[(int)lineType, 2](x, z, y);
 
                     if (CheckLine(placingState[(int)figureType], coord_0, coord_1, anchor)) {
+                        foundLine = true;
+
                         LineDimension lineDimension = lineTypeDimensions[(int)lineType];
                         int lineDimensionBonusPoints = lineDimensionsBonusPoints[(int)lineDimension];
                         if (figureType == gameManager.CurrentPlayer) {
