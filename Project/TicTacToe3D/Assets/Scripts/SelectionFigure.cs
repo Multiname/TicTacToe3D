@@ -27,7 +27,8 @@ public class SelectionFigure : MonoBehaviour {
         FiguresFall = 1,
         CameraIsRotating = 2,
         CameraIsInTransition = 4,
-        EffectIsPlaying = 8
+        EffectIsPlaying = 8,
+        MenuIsVisible = 16
     }
     private DisablingActions readinessState = DisablingActions.ReadyToPlace;
 
@@ -45,6 +46,9 @@ public class SelectionFigure : MonoBehaviour {
     }
     public bool EffectIsPlaying {
         set => SetDisablingActionsFlag(DisablingActions.EffectIsPlaying, value);
+    }
+    public bool MenuIsVisible {
+        set => SetDisablingActionsFlag(DisablingActions.MenuIsVisible, value);
     }
     private void SetDisablingActionsFlag(DisablingActions flag, bool active) {
         if (active) {

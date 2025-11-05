@@ -187,6 +187,12 @@ public class PointsEffector : MonoBehaviour {
     }
 
     [SerializeField] UiCanvas uiCanvas;
+    [SerializeField] PanelsManager panelsManager;
+    [SerializeField] GameManager gameManager;
+    [SerializeField] GameSettings gameSettings;
+
+    [SerializeField] float switchPeriod = 1.0f;
+
     [SerializeField] GameObject[] basePoints = new GameObject[Figure.NUMBER_OF_FIGURE_TYPES];
     [SerializeField] GameObject[] points2D = new GameObject[Figure.NUMBER_OF_FIGURE_TYPES];
     [SerializeField] GameObject[] points3D = new GameObject[Figure.NUMBER_OF_FIGURE_TYPES];
@@ -230,7 +236,7 @@ public class PointsEffector : MonoBehaviour {
     }
 
     private void Update() {
-        if (Mouse.current.leftButton.wasReleasedThisFrame && effectIsPlaying) {
+        if (Mouse.current.leftButton.wasReleasedThisFrame && effectIsPlaying && !panelsManager.MenuPanelIsVisible) {
             effectCts.Cancel();
         }
     }
@@ -240,27 +246,41 @@ public class PointsEffector : MonoBehaviour {
         effectCts?.Dispose();
     }
 
+    private bool CheckNecessityOfBonusPointsVisualization(Figure.FigureType figureType) {
+        return gameManager.CurrentPlayer == figureType ||
+            gameSettings.enabledInterceptionRule == GameSettings.InterceptionRule.NO_RESTRICTION ||
+            gameSettings.enabledInterceptionRule == GameSettings.InterceptionRule.STEAL_ALL_POINTS;
+    }
+
     public void AddLine(Figure[] line) {
         Line.LineExtraObjects lineExtraObjects = new(line);
+        
         linesOfBasePoints.Add(new Line(lineExtraObjects, basePoints[(int)lineExtraObjects.FigureType], placedBasePoints));
-        if (lineExtraObjects.Dimension == 2) {
-            linesOf2DPoints.Add(new Line(lineExtraObjects, points2D[(int)lineExtraObjects.FigureType], placed2DPoints));
-        }
-        if (lineExtraObjects.Dimension == 3) {
-            linesOf3DPoints.Add(new Line(lineExtraObjects, points3D[(int)lineExtraObjects.FigureType], placed3DPoints));
+
+        if (CheckNecessityOfBonusPointsVisualization(lineExtraObjects.FigureType)) {
+            if (lineExtraObjects.Dimension == 2 && gameSettings.enabledModifiers[(int)GameSettings.Modifier.LINE_2D]) {
+                linesOf2DPoints.Add(new Line(lineExtraObjects, points2D[(int)lineExtraObjects.FigureType], placed2DPoints));
+            }
+            if (lineExtraObjects.Dimension == 3 && gameSettings.enabledModifiers[(int)GameSettings.Modifier.LINE_3D]) {
+                linesOf3DPoints.Add(new Line(lineExtraObjects, points3D[(int)lineExtraObjects.FigureType], placed3DPoints));
+            }
         }
     }
 
     public void AddFallPoint(Figure figure) {
-        var point = new EffectPoint(figure, fallPoints);
-        placedFallPoints.Add(point);
+        if (CheckNecessityOfBonusPointsVisualization(figure.Type)) {
+            var point = new EffectPoint(figure, fallPoints);
+            placedFallPoints.Add(point);
+        }
     }
 
     public void TryToAddHeightPoint(Figure figure) {
-        int height = figure.coordinates.coordinates.y;
-        if (height > 0) {
-            var point = new EffectPoint(figure, heightPoints[height - 1]);
-            placedHeightPoints.Add(point);
+        if (CheckNecessityOfBonusPointsVisualization(figure.Type)) {
+            int height = figure.coordinates.coordinates.y;
+            if (height > 0) {
+                var point = new EffectPoint(figure, heightPoints[height - 1]);
+                placedHeightPoints.Add(point);
+            }
         }
     }
 
@@ -301,12 +321,14 @@ public class PointsEffector : MonoBehaviour {
     }
 
     private async UniTask PlayEffect(ICollection<IEffect> effectsCollection) {
+        float finalSwitchPeriod = switchPeriod / gameSettings.effectsSpeed;
+
         bool effectVisibility = true;
         while (!effectCts.Token.IsCancellationRequested) {
             SetEffectsVisibility(effectsCollection, effectVisibility);
             uiCanvas.SetNewPointsVisibility(effectVisibility);
             effectVisibility = !effectVisibility;
-            await UniTask.WaitForSeconds(1, cancellationToken: effectCts.Token).SuppressCancellationThrow();
+            await UniTask.WaitForSeconds(finalSwitchPeriod, cancellationToken: effectCts.Token).SuppressCancellationThrow();
         }
         SetEffectsVisibility(effectsCollection, false);
         uiCanvas.AcceptNewPoints();

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class BonusTurnEffect : MonoBehaviour {
+    [SerializeField] GameSettings gameSettings;
     [SerializeField] RectTransform bonusTurnArea;
     [SerializeField] Image bonusTurnIcon;
 
@@ -30,6 +31,8 @@ public class BonusTurnEffect : MonoBehaviour {
         var color = Color.white;
         color.a = 0;
 
+        float finalSpeed = speed * gameSettings.effectsSpeed;
+
         float x = -1.0f;
         while (x <= 1.0f) {
             var y = Mathf.Sqrt(1 - Mathf.Pow(x, 2));
@@ -46,7 +49,7 @@ public class BonusTurnEffect : MonoBehaviour {
             color.a = y;
             bonusTurnIcon.color = color;
 
-            x += speed * Time.deltaTime;
+            x += finalSpeed * Time.deltaTime;
             await UniTask.Yield();
         }
 

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UiCanvas : MonoBehaviour {
     [SerializeField] Board board;
+    [SerializeField] GameSettings gameSettings;
 
     [SerializeField] TextMeshProUGUI[] scoreTexts = new TextMeshProUGUI[Figure.NUMBER_OF_FIGURE_TYPES];
 
@@ -29,12 +30,23 @@ public class UiCanvas : MonoBehaviour {
     private readonly int[] upcomingScores = new int[Figure.NUMBER_OF_FIGURE_TYPES];
     private readonly List<GameObject> upcomingPointsContainers = new();
 
+    private void Start() {
+        for (int i = 0; i < Figure.NUMBER_OF_FIGURE_TYPES; ++i) {
+            currentScores[i] = gameSettings.winPoints;
+            upcomingScores[i] = gameSettings.winPoints;
+            scoreTexts[i].text = gameSettings.winPoints.ToString();
+        }
+    }
+
     private void PreparePoints(int[] gainedPoints, TextMeshProUGUI[] pointsTexts, GameObject[] pointsContainers) {
         for (int type = 0; type < Figure.NUMBER_OF_FIGURE_TYPES; ++type) {
             if (gainedPoints[type] > 0) {
                 pointsTexts[type].text = gainedPoints[type].ToString();
                 upcomingPointsContainers.Add(pointsContainers[type]);
-                upcomingScores[type] += gainedPoints[type];
+                upcomingScores[type] -= gainedPoints[type];
+                if (upcomingScores[type] < 0) {
+                    upcomingScores[type] = 0;
+                }
             }
         }
     }

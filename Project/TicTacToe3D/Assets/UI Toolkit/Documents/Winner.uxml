@@ -1,0 +1,34 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/MenuPanels.uss?fileID=7433441132597879392&amp;guid=83a428f73853d9f489b1a10188709a24&amp;type=3#MenuPanels" />
+    <ui:VisualElement name="OuterSpace" picking-mode="Ignore" style="flex-grow: 1; flex-basis: 100%;">
+        <ui:VisualElement name="Panel" style="flex-grow: 1; background-color: rgba(10, 15, 13, 0.9); margin-left: 30%; margin-right: 30%; margin-top: 5%; margin-bottom: 5%; border-top-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px; border-bottom-left-radius: 50px; padding-left: 3%; padding-right: 3%; padding-top: 3%; padding-bottom: 3%; flex-basis: 100%;">
+            <ui:VisualElement name="WinnerContainer" style="flex-grow: 1; flex-basis: 100%; flex-direction: column; flex-shrink: 1;">
+                <ui:VisualElement name="OneWinnerContainer" style="flex-grow: 1; flex-basis: 100%;">
+                    <ui:VisualElement name="TitleContainer" style="flex-grow: 1; flex-basis: 100%; flex-shrink: 3;">
+                        <ui:Label text="победитель" name="Title" style="flex-basis: 100%; flex-shrink: 1; color: rgb(240, 239, 244); -unity-font-definition: url(&quot;project://database/Assets/UI/Fonts/TDAText.ttf?fileID=12800000&amp;guid=51943b9d222c3114c9b2b7d68d9750b7&amp;type=3#TDAText&quot;); -unity-text-align: middle-center; font-size: 100%; word-spacing: -5px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="WinnerFigureContainer" style="flex-grow: 1; flex-basis: 100%; flex-shrink: 1;">
+                        <ui:Label text="O" name="SphereWinner" style="flex-basis: 100%; flex-shrink: 1; color: rgb(214, 40, 40); -unity-font-definition: url(&quot;project://database/Assets/UI/Fonts/Teletactile.ttf?fileID=12800000&amp;guid=8a51a3e175580254bb8993353958c87c&amp;type=3#Teletactile&quot;); -unity-text-align: middle-center; font-size: 450%; word-spacing: -5px;" />
+                        <ui:Label text="X" name="CrossWinner" style="flex-basis: 100%; flex-shrink: 1; color: rgb(214, 40, 40); -unity-font-definition: url(&quot;project://database/Assets/UI/Fonts/Teletactile.ttf?fileID=12800000&amp;guid=8a51a3e175580254bb8993353958c87c&amp;type=3#Teletactile&quot;); -unity-text-align: middle-center; font-size: 450%; word-spacing: -5px; display: none;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="DrawContainer" style="flex-grow: 1; flex-basis: 100%; display: none;">
+                    <ui:VisualElement name="XXXContainer" style="flex-grow: 1; flex-basis: 100%; flex-direction: row;">
+                        <ui:Label text="X" name="X" style="flex-basis: 100%; flex-shrink: 1; color: rgb(240, 239, 244); -unity-font-definition: url(&quot;project://database/Assets/UI/Fonts/Teletactile.ttf?fileID=12800000&amp;guid=8a51a3e175580254bb8993353958c87c&amp;type=3#Teletactile&quot;); -unity-text-align: middle-center; font-size: 200%; word-spacing: -5px;" />
+                        <ui:Label text="X" name="X" style="flex-basis: 100%; flex-shrink: 1; color: rgb(240, 239, 244); -unity-font-definition: url(&quot;project://database/Assets/UI/Fonts/Teletactile.ttf?fileID=12800000&amp;guid=8a51a3e175580254bb8993353958c87c&amp;type=3#Teletactile&quot;); -unity-text-align: middle-center; font-size: 200%; word-spacing: -5px;" />
+                        <ui:Label text="X" name="X" style="flex-basis: 100%; flex-shrink: 1; color: rgb(240, 239, 244); -unity-font-definition: url(&quot;project://database/Assets/UI/Fonts/Teletactile.ttf?fileID=12800000&amp;guid=8a51a3e175580254bb8993353958c87c&amp;type=3#Teletactile&quot;); -unity-text-align: middle-center; font-size: 200%; word-spacing: -5px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="DrawContainer" style="flex-grow: 1; flex-basis: 100%; flex-direction: row; padding-bottom: 10%;">
+                        <ui:Label text="ничья" name="Draw" style="flex-basis: 100%; flex-shrink: 1; color: rgb(214, 40, 40); -unity-font-definition: url(&quot;project://database/Assets/UI/Fonts/TDAText.ttf?fileID=12800000&amp;guid=51943b9d222c3114c9b2b7d68d9750b7&amp;type=3#TDAText&quot;); -unity-text-align: middle-center; font-size: 200%; word-spacing: -5px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="OOOContainer" style="flex-grow: 1; flex-basis: 100%; flex-direction: row; padding-bottom: 5%;">
+                        <ui:Label text="O" name="O" style="flex-basis: 100%; flex-shrink: 1; color: rgb(240, 239, 244); -unity-font-definition: url(&quot;project://database/Assets/UI/Fonts/Teletactile.ttf?fileID=12800000&amp;guid=8a51a3e175580254bb8993353958c87c&amp;type=3#Teletactile&quot;); -unity-text-align: middle-center; font-size: 200%; word-spacing: -5px;" />
+                        <ui:Label text="O" name="O" style="flex-basis: 100%; flex-shrink: 1; color: rgb(240, 239, 244); -unity-font-definition: url(&quot;project://database/Assets/UI/Fonts/Teletactile.ttf?fileID=12800000&amp;guid=8a51a3e175580254bb8993353958c87c&amp;type=3#Teletactile&quot;); -unity-text-align: middle-center; font-size: 200%; word-spacing: -5px;" />
+                        <ui:Label text="O" name="O" style="flex-basis: 100%; flex-shrink: 1; color: rgb(240, 239, 244); -unity-font-definition: url(&quot;project://database/Assets/UI/Fonts/Teletactile.ttf?fileID=12800000&amp;guid=8a51a3e175580254bb8993353958c87c&amp;type=3#Teletactile&quot;); -unity-text-align: middle-center; font-size: 200%; word-spacing: -5px;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:Button text="новая игра" name="RestartButton" class="menuButton" style="display: flex; flex-shrink: 8; margin-top: 0%; margin-right: 0; margin-bottom: 0; margin-left: 0; flex-basis: 100%;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

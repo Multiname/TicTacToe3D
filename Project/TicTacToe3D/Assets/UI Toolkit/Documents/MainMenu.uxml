@@ -1,0 +1,32 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USS/MainMenu.uss?fileID=7433441132597879392&amp;guid=83a428f73853d9f489b1a10188709a24&amp;type=3#MainMenu" />
+    <ui:VisualElement name="OuterSpace" picking-mode="Ignore" style="flex-grow: 1; flex-basis: 100%;">
+        <ui:VisualElement name="Panel" style="flex-grow: 1; background-color: rgba(10, 15, 13, 0.9); margin-left: 30%; margin-right: 30%; margin-top: 5%; margin-bottom: 5%; border-top-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px; border-bottom-left-radius: 50px; padding-left: 3%; padding-right: 3%; padding-top: 3%; padding-bottom: 3%; flex-basis: 100%;">
+            <ui:VisualElement name="TitleContainer" style="flex-grow: 3; background-color: rgba(204, 28, 28, 0); flex-direction: row; flex-basis: 0%; flex-shrink: 1;">
+                <ui:VisualElement name="TicTacToeContainer" style="flex-grow: 1; flex-direction: column; flex-basis: 0%;">
+                    <ui:VisualElement name="TicContainer" style="flex-grow: 1; flex-direction: row; flex-basis: 100%; padding-top: 3%;">
+                        <ui:Label text="T" name="Label" class="titleCross" style="flex-basis: 0%; flex-grow: 1; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+                        <ui:Label text="I" name="Label" class="titleSphere" style="flex-basis: 0%; flex-grow: 1; flex-shrink: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+                        <ui:Label text="C" name="Label" class="titleCross" style="flex-basis: 0%; flex-grow: 1; flex-shrink: 1; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="TicContainer" style="flex-grow: 1; flex-direction: row; flex-basis: 100%; padding-top: 3%;">
+                        <ui:Label text="T" name="Label" class="titleSphere" style="flex-basis: 0%; flex-grow: 1; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+                        <ui:Label text="A" name="Label" class="titleCross" style="flex-basis: 0%; flex-grow: 1; flex-shrink: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+                        <ui:Label text="C" name="Label" class="titleSphere" style="flex-basis: 0%; flex-grow: 1; flex-shrink: 1; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="TicContainer" style="flex-grow: 1; flex-direction: row; flex-basis: 100%; padding-top: 3%;">
+                        <ui:Label text="T" name="Label" class="titleCross" style="flex-basis: 0%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; flex-grow: 1;" />
+                        <ui:Label text="O" name="Label" class="titleSphere" style="flex-basis: 0%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; flex-grow: 1; flex-shrink: 0;" />
+                        <ui:Label text="E" name="Label" class="titleCross" style="flex-basis: 0%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; flex-grow: 1; flex-shrink: 1;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label text="3D" name="3D" class="titleCross" style="flex-basis: 0%; flex-grow: 1; -unity-text-align: middle-center; font-size: 190%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 4%; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="MenuButtonsContainer" style="flex-grow: 4; background-color: rgba(28, 40, 204, 0); flex-basis: 0%; flex-shrink: 2;">
+                <ui:Button text="новая игра" name="NewGameButton" class="mainMenuButton" style="display: flex; flex-shrink: 1;" />
+                <ui:Button text="настройки" name="SettingsButton" class="mainMenuButton" style="flex-shrink: 1;" />
+                <ui:Button text="справочник" name="InfoButton" class="mainMenuButton" style="flex-shrink: 1;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

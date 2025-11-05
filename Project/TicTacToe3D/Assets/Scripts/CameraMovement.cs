@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CameraMovement : MonoBehaviour {
+    [SerializeField] GameSettings gameSettings;
+
     [SerializeField] SelectionFigure selectionFigure;
 
     [SerializeField] float rotationSpeed = 1.0f;
@@ -19,7 +21,7 @@ public class CameraMovement : MonoBehaviour {
     private void Update() {
         if (Mouse.current.rightButton.isPressed && ready) {
             selectionFigure.CameraIsRotating = true;
-            transform.Rotate(Mouse.current.delta.x.ReadValue() * rotationSpeed * Vector3.up);
+            transform.Rotate(Mouse.current.delta.x.ReadValue() * rotationSpeed * gameSettings.sensitivity * Vector3.up);
         } else if (Mouse.current.rightButton.wasReleasedThisFrame) {
             selectionFigure.CameraIsRotating = false;
         }
@@ -42,10 +44,12 @@ public class CameraMovement : MonoBehaviour {
     }
 
     private IEnumerator TransitToFieldOfView(Vector3 targetLocalPosition, float targetOrtographicSize, Action callback) {
+        float finalTransitionSpeed = transitionSpeed * gameSettings.effectsSpeed;
+
         float sign = Mathf.Sign(targetOrtographicSize - Camera.main.orthographicSize);
         while (sign * (targetOrtographicSize - Camera.main.orthographicSize) > 0) {
-            Camera.main.transform.localPosition += new Vector3(0.0f, sign * LOCAL_POSITION_STEP * transitionSpeed * Time.deltaTime, 0.0f);
-            Camera.main.orthographicSize += sign * ORTHOGRAPHIC_SIZE_STEP * transitionSpeed * Time.deltaTime;
+            Camera.main.transform.localPosition += new Vector3(0.0f, sign * LOCAL_POSITION_STEP * finalTransitionSpeed * Time.deltaTime, 0.0f);
+            Camera.main.orthographicSize += sign * ORTHOGRAPHIC_SIZE_STEP * finalTransitionSpeed * Time.deltaTime;
             yield return null;
         }
         Camera.main.transform.localPosition = targetLocalPosition;

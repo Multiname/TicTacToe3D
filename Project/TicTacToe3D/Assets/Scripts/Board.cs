@@ -159,23 +159,14 @@ public class Board : MonoBehaviour {
         }
     };
 
-    private enum EnemyFigureBlowingHandleMethod {
-        NO_RESTRICTION,
-        NO_POINTS,
-        NO_BONUS,
-        STEAL_BASE_POINTS,
-        STEAL_ALL_POINTS
-    }
-
     private readonly Action<int>[] enemyBasePointsGainHandlers = new Action<int>[5];
     private readonly Action<int, int[]>[] enemyBonusPointsGainHandlers = new Action<int, int[]>[5];
-
-    [SerializeField] EnemyFigureBlowingHandleMethod enemyFigureBlowingHandleMethod = EnemyFigureBlowingHandleMethod.NO_RESTRICTION;
 
     [SerializeField] FigureSidesBuilder figureSidesBuilder;
     [SerializeField] SelectionFigure selectionFigure;
     [SerializeField] CameraMovement cameraMovement;
     [SerializeField] GameManager gameManager;
+    [SerializeField] GameSettings gameSettings;
     [SerializeField] PointsEffector pointsEffector;
     [SerializeField] BonusTurnEffect bonusTurnEffect;
 
@@ -286,7 +277,8 @@ public class Board : MonoBehaviour {
                     x_0, z_0, y_0,
                     x_1, z_1, y_1
                 )) {
-                    if (lineDimension != LineDimension.LINE_1D) {
+                    if (lineDimension == LineDimension.LINE_2D && gameSettings.enabledModifiers[(int)GameSettings.Modifier.LINE_2D] ||
+                        lineDimension == LineDimension.LINE_3D && gameSettings.enabledModifiers[(int)GameSettings.Modifier.LINE_3D]) {
                         gainedPoints[(int)figureType] += lineDimensionsBonusPoints[(int)lineDimension];
                         lineDimensionGainedBonusPoints[(int)lineDimension][(int)figureType] += lineDimensionsBonusPoints[(int)lineDimension];
                     }
@@ -443,32 +435,32 @@ public class Board : MonoBehaviour {
             }
         };
 
-        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_RESTRICTION] = (points) => {
+        enemyBasePointsGainHandlers[(int)GameSettings.InterceptionRule.NO_RESTRICTION] = (points) => {
             gainedPoints[(int)gameManager.EnemyPlayer] += points;
             gainedBasePoints[(int)gameManager.EnemyPlayer] += points;
         };
-        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_POINTS] = (points) => { };
-        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_BONUS] = (points) => {
+        enemyBasePointsGainHandlers[(int)GameSettings.InterceptionRule.NO_POINTS] = (points) => { };
+        enemyBasePointsGainHandlers[(int)GameSettings.InterceptionRule.NO_BONUS] = (points) => {
             gainedPoints[(int)gameManager.EnemyPlayer] += points;
             gainedBasePoints[(int)gameManager.EnemyPlayer] += points;
         };
-        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_BASE_POINTS] = (points) => {
+        enemyBasePointsGainHandlers[(int)GameSettings.InterceptionRule.STEAL_BASE_POINTS] = (points) => {
             gainedPoints[(int)gameManager.CurrentPlayer] += points;
             gainedBasePoints[(int)gameManager.CurrentPlayer] += points;
         };
-        enemyBasePointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_ALL_POINTS] = (points) => {
+        enemyBasePointsGainHandlers[(int)GameSettings.InterceptionRule.STEAL_ALL_POINTS] = (points) => {
             gainedPoints[(int)gameManager.CurrentPlayer] += points;
             gainedBasePoints[(int)gameManager.CurrentPlayer] += points;
         };
 
-        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_RESTRICTION] = (points, gainedBonusPoints) => {
+        enemyBonusPointsGainHandlers[(int)GameSettings.InterceptionRule.NO_RESTRICTION] = (points, gainedBonusPoints) => {
             gainedPoints[(int)gameManager.EnemyPlayer] += points;
             gainedBonusPoints[(int)gameManager.EnemyPlayer] += points;
         };
-        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_POINTS] = (points, gainedBonusPoints) => { };
-        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.NO_BONUS] = (points, gainedBonusPoints) => { };
-        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_BASE_POINTS] = (points, gainedBonusPoints) => { };
-        enemyBonusPointsGainHandlers[(int)EnemyFigureBlowingHandleMethod.STEAL_ALL_POINTS] = (points, gainedBonusPoints) => {
+        enemyBonusPointsGainHandlers[(int)GameSettings.InterceptionRule.NO_POINTS] = (points, gainedBonusPoints) => { };
+        enemyBonusPointsGainHandlers[(int)GameSettings.InterceptionRule.NO_BONUS] = (points, gainedBonusPoints) => { };
+        enemyBonusPointsGainHandlers[(int)GameSettings.InterceptionRule.STEAL_BASE_POINTS] = (points, gainedBonusPoints) => { };
+        enemyBonusPointsGainHandlers[(int)GameSettings.InterceptionRule.STEAL_ALL_POINTS] = (points, gainedBonusPoints) => {
             gainedPoints[(int)gameManager.CurrentPlayer] += points;
             gainedBonusPoints[(int)gameManager.CurrentPlayer] += points;
         };
@@ -490,6 +482,17 @@ public class Board : MonoBehaviour {
     private void ResetGainedPoints() {
         for (int i = 0; i < Figure.NUMBER_OF_FIGURE_TYPES; ++i) {
             gainedPoints[i] = 0;
+        }
+    }
+
+    private void ResetParticularPoints() {
+        for (int i = 0; i < Figure.NUMBER_OF_FIGURE_TYPES; ++i) {
+            gainedBasePoints[i] = 0;
+            gained2DPoints[i] = 0;
+            gained3DPoints[i] = 0;
+            gainedFallPoints[i] = 0;
+            gainedHeightPoints[i] = 0;
+            gainedComboPoints[i] = 0;
         }
     }
 
@@ -543,18 +546,20 @@ public class Board : MonoBehaviour {
                         LineDimension lineDimension = lineTypeDimensions[(int)lineType];
                         int lineDimensionBonusPoints = lineDimensionsBonusPoints[(int)lineDimension];
                         if (figureType == gameManager.CurrentPlayer) {
-                            if (lineDimension != LineDimension.LINE_1D) {
+                            if (lineDimension == LineDimension.LINE_2D && gameSettings.enabledModifiers[(int)GameSettings.Modifier.LINE_2D] ||
+                                lineDimension == LineDimension.LINE_3D && gameSettings.enabledModifiers[(int)GameSettings.Modifier.LINE_3D]) {
                                 gainedPoints[(int)figureType] += lineDimensionBonusPoints;
                                 lineDimensionGainedBonusPoints[(int)lineDimension][(int)figureType] += lineDimensionBonusPoints;
                             }
 
                             gainedPoints[(int)figureType] += comboCount;
                         } else {
-                            if (lineDimension != LineDimension.LINE_1D) {
-                                enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](lineDimensionBonusPoints, lineDimensionGainedBonusPoints[(int)lineDimension]);
+                            if (lineDimension == LineDimension.LINE_2D && gameSettings.enabledModifiers[(int)GameSettings.Modifier.LINE_2D] ||
+                                lineDimension == LineDimension.LINE_3D && gameSettings.enabledModifiers[(int)GameSettings.Modifier.LINE_3D]) {
+                                enemyBonusPointsGainHandlers[(int)gameSettings.enabledInterceptionRule](lineDimensionBonusPoints, lineDimensionGainedBonusPoints[(int)lineDimension]);
                             }
 
-                            enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](comboCount, new int[2]);
+                            enemyBonusPointsGainHandlers[(int)gameSettings.enabledInterceptionRule](comboCount, new int[2]);
                         }
 
                         pointsEffector.AddLine(new Figure[] {
@@ -563,19 +568,21 @@ public class Board : MonoBehaviour {
                             placedFigures[coord_1.x, coord_1.z, coord_1.y]
                         });
 
-                        pointsEffector.TryToAddHeightPoint(placedFigures[coord_0.x, coord_0.z, coord_0.y]);
-                        pointsEffector.TryToAddHeightPoint(placedFigures[anchor.x, anchor.z, anchor.y]);
-                        pointsEffector.TryToAddHeightPoint(placedFigures[coord_1.x, coord_1.z, coord_1.y]);
+                        if (gameSettings.enabledModifiers[(int)GameSettings.Modifier.FALL]) {
+                            pointsEffector.TryToAddHeightPoint(placedFigures[coord_0.x, coord_0.z, coord_0.y]);
+                            pointsEffector.TryToAddHeightPoint(placedFigures[anchor.x, anchor.z, anchor.y]);
+                            pointsEffector.TryToAddHeightPoint(placedFigures[coord_1.x, coord_1.z, coord_1.y]);
+                        }
                     }
                 }
             }
 
-            if (foundLine) {
+            if (foundLine && gameSettings.enabledModifiers[(int)GameSettings.Modifier.Combo]) {
                 if (figureType == gameManager.CurrentPlayer) {
                     gainedPoints[(int)figureType] += comboCount;
                     gainedComboPoints[(int)figureType] += comboCount;
                 } else {
-                    enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](comboCount, gainedComboPoints);
+                    enemyBonusPointsGainHandlers[(int)gameSettings.enabledInterceptionRule](comboCount, gainedComboPoints);
                 }
             }
         }
@@ -613,7 +620,7 @@ public class Board : MonoBehaviour {
 
         singleFigureLineFinders[x_ + z_](figure.Type, x, x_, z, z_, y);
 
-        if (fell && figuresToBlowList.Contains(figure)) {
+        if (fell && figuresToBlowList.Contains(figure) && gameSettings.enabledModifiers[(int)GameSettings.Modifier.FALL]) {
             ++gainedPoints[(int)figure.Type];
             ++gainedFallPoints[(int)figure.Type];
             pointsEffector.AddFallPoint(figure);
@@ -648,17 +655,26 @@ public class Board : MonoBehaviour {
     private async UniTask BlowFigures(ICollection<Figure> figuresToBlowCollection) {
         foreach (var figure in figuresToBlowCollection) {
             if (figure.Type == gameManager.CurrentPlayer) {
-                ++gainedPoints[(int)figure.Type];
-                ++gainedBasePoints[(int)figure.Type];
+                if (gameSettings.enabledModifiers[(int)GameSettings.Modifier.BASE_POINTS]) {
+                    ++gainedPoints[(int)figure.Type];
+                    ++gainedBasePoints[(int)figure.Type];
+                }
 
-                gainedPoints[(int)figure.Type] += figure.coordinates.coordinates.y;
-                gainedHeightPoints[(int)figure.Type] += figure.coordinates.coordinates.y;
+                if (gameSettings.enabledModifiers[(int)GameSettings.Modifier.HEIGHT]) {
+                    gainedPoints[(int)figure.Type] += figure.coordinates.coordinates.y;
+                    gainedHeightPoints[(int)figure.Type] += figure.coordinates.coordinates.y;
+                    pointsEffector.TryToAddHeightPoint(figure);
+                }
             } else {
-                enemyBasePointsGainHandlers[(int)enemyFigureBlowingHandleMethod](1);
-                enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](figure.coordinates.coordinates.y, gainedHeightPoints);
-            }
+                if (gameSettings.enabledModifiers[(int)GameSettings.Modifier.BASE_POINTS]) {
+                    enemyBasePointsGainHandlers[(int)gameSettings.enabledInterceptionRule](1);
+                }
 
-            pointsEffector.TryToAddHeightPoint(figure);
+                if (gameSettings.enabledModifiers[(int)GameSettings.Modifier.HEIGHT]) {
+                    enemyBonusPointsGainHandlers[(int)gameSettings.enabledInterceptionRule](figure.coordinates.coordinates.y, gainedHeightPoints);
+                    pointsEffector.TryToAddHeightPoint(figure);
+                }
+            }
         }
 
         if (figuresToBlowCollection.Count > 0) {
@@ -667,14 +683,7 @@ public class Board : MonoBehaviour {
             selectionFigure.EffectIsPlaying = false;
         }
 
-        for (int i = 0; i < Figure.NUMBER_OF_FIGURE_TYPES; ++i) {
-            gainedBasePoints[i] = 0;
-            gained2DPoints[i] = 0;
-            gained3DPoints[i] = 0;
-            gainedFallPoints[i] = 0;
-            gainedHeightPoints[i] = 0;
-            gainedComboPoints[i] = 0;
-        }
+        ResetParticularPoints();
 
         foreach (var figure in figuresToBlowCollection) {
             int newHeight = --cellsHeight[figure.coordinates.coordinates.x, figure.coordinates.coordinates.z];
@@ -751,14 +760,16 @@ public class Board : MonoBehaviour {
     private void CheckBlowingAmongFallen() {
         foreach (Figure figure in figuresToBlowSet) {
             if (figuresToFall.Keys.Contains(figure)) {
-                if (figure.Type == gameManager.CurrentPlayer) {
-                    ++gainedPoints[(int)figure.Type];
-                    ++gainedFallPoints[(int)figure.Type];
-                } else {
-                    enemyBonusPointsGainHandlers[(int)enemyFigureBlowingHandleMethod](1, gainedFallPoints);
-                }
+                if (gameSettings.enabledModifiers[(int)GameSettings.Modifier.FALL]) {
+                    if (figure.Type == gameManager.CurrentPlayer) {
+                        ++gainedPoints[(int)figure.Type];
+                        ++gainedFallPoints[(int)figure.Type];
+                    } else {
+                        enemyBonusPointsGainHandlers[(int)gameSettings.enabledInterceptionRule](1, gainedFallPoints);
+                    }
 
-                pointsEffector.AddFallPoint(figure);
+                    pointsEffector.AddFallPoint(figure);
+                }
             }
         }
     }
@@ -795,21 +806,19 @@ public class Board : MonoBehaviour {
     }
 
     private void StartNextTurn() {
-        for (Figure.FigureType i = 0; (int)i < Figure.NUMBER_OF_FIGURE_TYPES; ++i) {
-            gameManager.AddPointsToPlayer(i, gainedPoints[(int)i]);
-        }
+        gameManager.AddPointsToPlayers(gainedPoints);
         ResetGainedPoints();
         comboCount = 1;
 
         selectionFigure.CameraIsInTransition = true;
         cameraMovement.UpdateFieldOfView(GetCurrentMaxHeight(), async () => {
-            if (!playerBlewLine) {
+            if (!playerBlewLine || !gameSettings.enabledModifiers[(int)GameSettings.Modifier.BONUS_TURN]) {
                 gameManager.StartNextTurn();
                 selectionFigure.SwitchForm();
             } else {
                 await bonusTurnEffect.StartEffect(gameManager.CurrentPlayer);
-                playerBlewLine = false;
             }
+            playerBlewLine = false;
             selectionFigure.CameraIsInTransition = false;
         });
     }
