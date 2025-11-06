@@ -551,15 +551,11 @@ public class Board : MonoBehaviour {
                                 gainedPoints[(int)figureType] += lineDimensionBonusPoints;
                                 lineDimensionGainedBonusPoints[(int)lineDimension][(int)figureType] += lineDimensionBonusPoints;
                             }
-
-                            gainedPoints[(int)figureType] += comboCount;
                         } else {
                             if (lineDimension == LineDimension.LINE_2D && gameSettings.enabledModifiers[(int)GameSettings.Modifier.LINE_2D] ||
                                 lineDimension == LineDimension.LINE_3D && gameSettings.enabledModifiers[(int)GameSettings.Modifier.LINE_3D]) {
                                 enemyBonusPointsGainHandlers[(int)gameSettings.enabledInterceptionRule](lineDimensionBonusPoints, lineDimensionGainedBonusPoints[(int)lineDimension]);
                             }
-
-                            enemyBonusPointsGainHandlers[(int)gameSettings.enabledInterceptionRule](comboCount, new int[2]);
                         }
 
                         pointsEffector.AddLine(new Figure[] {
