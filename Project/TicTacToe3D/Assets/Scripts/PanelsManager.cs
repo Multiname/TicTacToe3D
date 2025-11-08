@@ -25,7 +25,6 @@ public class PanelsManager : MonoBehaviour {
     public bool MenuPanelIsVisible { get; private set; }
     private bool gameIsOngoing;
 
-
     private void Start() {
         menuPanels = new UiPanel[NUMBER_OF_MAIN_MENU_OPTIONS] {
             newGamePanel,
@@ -61,7 +60,9 @@ public class PanelsManager : MonoBehaviour {
 
     private void SetMenuButtonToShowMainMenu() {
         menuButton.handleClick = () => {
+            mainMenu.shownFromScene = true;
             mainMenu.Visible = true;
+
             if (selectionFigure != null) selectionFigure.MenuIsVisible = true;
             MenuPanelIsVisible = true;
             menuButton.SetGoBackSprite();
@@ -72,7 +73,9 @@ public class PanelsManager : MonoBehaviour {
 
     private void SetMenuButtonToHideMainMenu() {
         menuButton.handleClick = () => {
+            mainMenu.shownFromScene = false;
             mainMenu.Visible = false;
+
             if (selectionFigure != null) selectionFigure.MenuIsVisible = false;
             menuButton.SetShowMenuSprite();
 
@@ -102,7 +105,9 @@ public class PanelsManager : MonoBehaviour {
     }
 
     public void ProceedToPanel(MainMenuOption mainMenuOption) {
+        mainMenu.shownFromScene = false;
         mainMenu.Visible = false;
+        
         menuPanels[(int)mainMenuOption].Visible = true;
         menuButton.gameObject.SetActive(true);
 

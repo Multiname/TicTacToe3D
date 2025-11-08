@@ -8,8 +8,15 @@ public class UiPanel : MonoBehaviour {
 
     public bool Visible {
         get => panel.visible;
-        set => panel.visible = value;
+        set {
+            panel.visible = value;
+            if (value) {
+                enabledVisibilityFrameCount = Time.frameCount;
+            }
+        }
     }
+
+    protected int enabledVisibilityFrameCount = 0;
 
     protected virtual void Awake() {
         uiDocument = GetComponent<UIDocument>();

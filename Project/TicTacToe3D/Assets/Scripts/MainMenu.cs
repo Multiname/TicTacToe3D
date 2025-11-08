@@ -5,6 +5,8 @@ using UnityEngine.UIElements;
 public class MainMenu : UiPanel {
     [SerializeField] PanelsManager panelsManager;
 
+    public bool shownFromScene = false;
+
     protected override void Awake() {
         base.Awake();
 
@@ -21,7 +23,11 @@ public class MainMenu : UiPanel {
         button.RegisterCallback<PointerDownEvent>(e => button.AddToClassList("pressed"), TrickleDown.TrickleDown);
         button.RegisterCallback<PointerUpEvent>(e => button.RemoveFromClassList("pressed"));
 
-        button.RegisterCallback<PointerEnterEvent>(e => button.AddToClassList("hover"));
+        button.RegisterCallback<PointerEnterEvent>(e => {
+            if (enabledVisibilityFrameCount != Time.frameCount || !shownFromScene) {
+                button.AddToClassList("hover");
+            }
+        });
         button.RegisterCallback<PointerOutEvent>(e => button.RemoveFromClassList("hover"));
     }
 }

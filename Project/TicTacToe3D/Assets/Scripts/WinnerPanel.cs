@@ -20,8 +20,16 @@ public class WinnerPanel : UiPanel {
 
         restartButton = uiDocument.rootVisualElement.Q<Button>("RestartButton");
         restartButton.RegisterCallback<ClickEvent>(evt => panelsManager.GoBackToMainMenuFromWinnerPanel());
+
         restartButton.RegisterCallback<PointerDownEvent>(e => restartButton.AddToClassList("pressed"), TrickleDown.TrickleDown);
         restartButton.RegisterCallback<PointerUpEvent>(e => restartButton.RemoveFromClassList("pressed"));
+        
+        restartButton.RegisterCallback<PointerEnterEvent>(e => {
+            if (enabledVisibilityFrameCount != Time.frameCount) {
+                restartButton.AddToClassList("hover");
+            }
+        });
+        restartButton.RegisterCallback<PointerOutEvent>(e => restartButton.RemoveFromClassList("hover"));
     }
 
     public void ShowSphereWinner() {
