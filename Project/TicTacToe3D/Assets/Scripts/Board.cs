@@ -694,6 +694,7 @@ public class Board : MonoBehaviour {
             }
 
             RemoveFigureFromMatrices(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z, figure.coordinates.coordinates.y);
+            figure.PlayDestructionSfx();
             Destroy(figure.gameObject);
         }
         figuresToBlowCollection.Clear();
@@ -713,10 +714,16 @@ public class Board : MonoBehaviour {
                 );
             }
 
-            figure.FallTo(newHeight, HandleFiguresFall);
             figure.coordinates.coordinates.y = newHeight;
             UpdateFigureMatrices(figure);
         }
+        foreach (var (figure, newHeight) in figuresToFall) {
+            int x = figure.coordinates.coordinates.x;
+            int z = figure.coordinates.coordinates.z;
+            int y = figure.coordinates.coordinates.y;
+            figure.FallTo(newHeight, HandleFiguresFall, y == 0 || !figuresToFall.Keys.Contains(placedFigures[x, z, y - 1]));
+        }
+
         if (figuresToFall.Count > 0) {
             selectionFigure.FiguresFall = true;
         } else {

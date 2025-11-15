@@ -80,6 +80,7 @@ public class PointsEffector : MonoBehaviour {
 
     private interface IEffect {
         public void SetVisibility(bool visibility);
+        public void SetFiguresInvolved(bool involved);
     }
 
     private class Line : IEffect {
@@ -112,6 +113,10 @@ public class PointsEffector : MonoBehaviour {
                 point.SetActive(visibility);
             }
             lineExtraObjects.SetVisibility(visibility);
+        }
+
+        public void SetFiguresInvolved(bool involved) {
+            lineExtraObjects.SetFiguresInvolved(involved);
         }
 
         public class LineExtraObjects {
@@ -159,7 +164,13 @@ public class PointsEffector : MonoBehaviour {
                     connector.gameObject.SetActive(visibility);
                 }
                 foreach (var figure in correspondingFigures) {
-                    figure.gameObject.SetActive(!visibility);
+                    figure.Visible = !visibility;
+                }
+            }
+
+            public void SetFiguresInvolved(bool involved) {
+                foreach (var figure in correspondingFigures) {
+                    figure.involvedInPointEffect = involved;
                 }
             }
         }
@@ -178,11 +189,15 @@ public class PointsEffector : MonoBehaviour {
 
         public void SetVisibility(bool visibility) {
             point.SetActive(visibility);
-            correspondingFigure.gameObject.SetActive(!visibility);
+            correspondingFigure.Visible = !visibility;
         }
 
         public void Destroy() {
             UnityEngine.Object.Destroy(point);
+        }
+
+        public void SetFiguresInvolved(bool involved) {
+            correspondingFigure.involvedInPointEffect = involved;
         }
     }
 
@@ -219,6 +234,9 @@ public class PointsEffector : MonoBehaviour {
 
     private CancellationTokenSource effectCts;
     private bool effectIsPlaying = false;
+
+    public static event Action OnStartNextEffectEvent;
+    public static event Action OnEndEffectsEvent;
 
     private void Start() {
         connectorsPrefabs = new Connector[3][] {
@@ -294,6 +312,8 @@ public class PointsEffector : MonoBehaviour {
         await TryToStartNextEffect(placedFallPoints, uiCanvas.PrepareFallPoints);
         await TryToStartNextEffect(placedHeightPoints, uiCanvas.PrepareHeightPoints);
 
+        OnEndEffectsEvent?.Invoke();
+
         DisposePlaced();
         uiCanvas.HidePointsContainers();
 
@@ -303,7 +323,18 @@ public class PointsEffector : MonoBehaviour {
     private async UniTask StartNextEffect(ICollection<IEffect> effectsCollection, Action prepareUi) {
         effectCts = new();
         prepareUi();
+
+        foreach (var effect in effectsCollection) {
+            effect.SetFiguresInvolved(true);
+        }
+
+        OnStartNextEffectEvent?.Invoke();
         await PlayEffect(effectsCollection);
+        
+        foreach (var effect in effectsCollection) {
+            effect.SetFiguresInvolved(false);
+        }
+
         effectCts.Dispose();
         effectCts = null;
     }
@@ -321,7 +352,7 @@ public class PointsEffector : MonoBehaviour {
     }
 
     private async UniTask PlayEffect(ICollection<IEffect> effectsCollection) {
-        float finalSwitchPeriod = switchPeriod / gameSettings.effectsSpeed;
+        float finalSwitchPeriod = switchPeriod / gameSettings.EffectsSpeed;
 
         bool effectVisibility = true;
         while (!effectCts.Token.IsCancellationRequested) {

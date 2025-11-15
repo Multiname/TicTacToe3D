@@ -31,7 +31,7 @@ public class BonusTurnEffect : MonoBehaviour {
         var color = Color.white;
         color.a = 0;
 
-        float finalSpeed = speed * gameSettings.effectsSpeed;
+        float finalSpeed = speed * gameSettings.EffectsSpeed;
 
         float x = -1.0f;
         while (x <= 1.0f) {

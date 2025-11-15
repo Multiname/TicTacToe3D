@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour {
     [SerializeField] PanelsManager panelsManager;
     [SerializeField] SelectionFigure selectionFigure;
 
+    public static event Action<Figure.FigureType> OnStartNextTurnEvent;
+
     public Figure.FigureType CurrentPlayer { get; private set; } = Figure.FigureType.SPHERE;
     public Figure.FigureType EnemyPlayer {
         get {
@@ -39,6 +41,8 @@ public class GameManager : MonoBehaviour {
         } else {
             CurrentPlayer = Figure.FigureType.SPHERE;
         }
+
+        OnStartNextTurnEvent?.Invoke(CurrentPlayer);
     }
 
     public void AddPointsToPlayers(int[] points) {

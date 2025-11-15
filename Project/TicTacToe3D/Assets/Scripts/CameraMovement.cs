@@ -18,6 +18,8 @@ public class CameraMovement : MonoBehaviour {
 
     public bool ready = true;
 
+    public static event Action<int, float> OnUpdateFieldOfViewEvent;
+
     private void Update() {
         if (Mouse.current.rightButton.isPressed && ready) {
             selectionFigure.CameraIsRotating = true;
@@ -38,13 +40,16 @@ public class CameraMovement : MonoBehaviour {
             TransitToFieldOfView(
                 new(0.0f, BASE_LOCAL_POSITION + LOCAL_POSITION_STEP * maxHeight, -3.0f),
                 BASE_ORTHOGRAPHIC_SIZE + ORTHOGRAPHIC_SIZE_STEP * maxHeight,
+                maxHeight,
                 callback
             )
         );
     }
 
-    private IEnumerator TransitToFieldOfView(Vector3 targetLocalPosition, float targetOrtographicSize, Action callback) {
-        float finalTransitionSpeed = transitionSpeed * gameSettings.effectsSpeed;
+    private IEnumerator TransitToFieldOfView(Vector3 targetLocalPosition, float targetOrtographicSize, int maxHeight, Action callback) {
+        float finalTransitionSpeed = transitionSpeed * gameSettings.EffectsSpeed;
+
+        OnUpdateFieldOfViewEvent?.Invoke(maxHeight, MathF.Abs(targetOrtographicSize - Camera.main.orthographicSize) / (ORTHOGRAPHIC_SIZE_STEP * finalTransitionSpeed));
 
         float sign = Mathf.Sign(targetOrtographicSize - Camera.main.orthographicSize);
         while (sign * (targetOrtographicSize - Camera.main.orthographicSize) > 0) {

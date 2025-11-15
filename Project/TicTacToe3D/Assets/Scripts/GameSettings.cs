@@ -40,5 +40,13 @@ public class GameSettings : ScriptableObject {
 
     public float volume = 1.0f;
     public float sensitivity = 1.0f;
-    public float effectsSpeed = 1.0f;
+
+    private float _effectsSpeed = 1.0f;
+    public float EffectsSpeed {
+        get => _effectsSpeed;
+        set {
+            _effectsSpeed = value;
+            BackgroundParticle.settingsEffectsSpeed = value;
+        }
+    }
 }

@@ -1,8 +1,8 @@
 using UnityEngine;
 
 public class IdleAnimation : MonoBehaviour {
-    [SerializeField] float speed = 1.0f;
-    [SerializeField] float distance = 0.0f;
+    public float speed = 1.0f;
+    public float distance = 0.0f;
 
     private Vector3 initialPoisiton;
     private float sinInput = 0.0f;
