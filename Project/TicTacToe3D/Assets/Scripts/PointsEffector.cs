@@ -329,6 +329,7 @@ public class PointsEffector : MonoBehaviour {
         }
 
         OnStartNextEffectEvent?.Invoke();
+        SfxPlayer.PlaySound(SfxPlayer.Sound.GET_BONUS);
         await PlayEffect(effectsCollection);
         
         foreach (var effect in effectsCollection) {
@@ -355,7 +356,14 @@ public class PointsEffector : MonoBehaviour {
         float finalSwitchPeriod = switchPeriod / gameSettings.EffectsSpeed;
 
         bool effectVisibility = true;
+        bool firstIteration = true;
         while (!effectCts.Token.IsCancellationRequested) {
+            if (firstIteration) {
+                firstIteration = false;
+            } else {
+                SfxPlayer.PlaySound(SfxPlayer.Sound.SWITCH_VISIBILITY_OF_POINTS_EFFECT);
+            }
+
             SetEffectsVisibility(effectsCollection, effectVisibility);
             uiCanvas.SetNewPointsVisibility(effectVisibility);
             effectVisibility = !effectVisibility;

@@ -91,10 +91,13 @@ public class PanelsManager : MonoBehaviour {
     public void ShowWinnerPanel(GameManager.Winner winner) {
         if (winner == GameManager.Winner.Sphere) {
             winnerPanel.ShowSphereWinner();
+            SfxPlayer.PlaySound(SfxPlayer.Sound.GAME_END);
         } else if (winner == GameManager.Winner.Cross) {
             winnerPanel.ShowCrossWinner();
+            SfxPlayer.PlaySound(SfxPlayer.Sound.GAME_END);
         } else {
             winnerPanel.ShowDraw();
+            SfxPlayer.PlaySound(SfxPlayer.Sound.GAME_DRAW);
         }
 
         selectionFigure.MenuIsVisible = true;

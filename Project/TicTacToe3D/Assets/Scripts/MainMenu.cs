@@ -18,7 +18,10 @@ public class MainMenu : UiPanel {
     private void ConfigureButton(string buttonName, Action clickAction) {
         var button = uiDocument.rootVisualElement.Q<Button>(buttonName);
 
-        button.RegisterCallback<ClickEvent>(evt => clickAction());
+        button.RegisterCallback<ClickEvent>(evt => {
+            clickAction();
+            SfxPlayer.PlaySound(SfxPlayer.Sound.UI_BUTTON_CLICK);
+        });
 
         button.RegisterCallback<PointerDownEvent>(e => button.AddToClassList("pressed"), TrickleDown.TrickleDown);
         button.RegisterCallback<PointerUpEvent>(e => button.RemoveFromClassList("pressed"));
@@ -26,6 +29,7 @@ public class MainMenu : UiPanel {
         button.RegisterCallback<PointerEnterEvent>(e => {
             if (enabledVisibilityFrameCount != Time.frameCount || !shownFromScene) {
                 button.AddToClassList("hover");
+                SfxPlayer.PlaySound(SfxPlayer.Sound.UI_BUTTON_HOVER);
             }
         });
         button.RegisterCallback<PointerOutEvent>(e => button.RemoveFromClassList("hover"));

@@ -66,12 +66,14 @@ public class Figure : MonoBehaviour {
     private void StopFalling(Action callback, bool playFallVfx) {
         if (playFallVfx) {
             fallVfx.Play();
+            SfxPlayer.PlaySound(SfxPlayer.Sound.FIGURE_FALL);
         }
         idleAnimation.enabled = true;
         callback();
     }
 
     public void PlayDestructionSfx() {
+        SfxPlayer.PlaySound(SfxPlayer.Sound.DESTROY_FIGURE);
         Instantiate(destructionVfx, transform.position, Quaternion.identity);
     }
 }

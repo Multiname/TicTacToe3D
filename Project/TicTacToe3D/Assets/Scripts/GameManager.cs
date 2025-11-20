@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour {
         for (int i = 0; i < Figure.NUMBER_OF_FIGURE_TYPES; ++i) {
             playersScores[i] = gameSettings.winPoints;
         }
+
+        SfxPlayer.PlaySound(SfxPlayer.Sound.GAME_START);
     }
 
     public void StartNextTurn() {

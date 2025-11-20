@@ -38,7 +38,7 @@ public class GameSettings : ScriptableObject {
 
     [HideInInspector] public InterceptionRule enabledInterceptionRule = InterceptionRule.NO_RESTRICTION;
 
-    public float volume = 1.0f;
+    public static float volume = 1.0f;
     public float sensitivity = 1.0f;
 
     private float _effectsSpeed = 1.0f;

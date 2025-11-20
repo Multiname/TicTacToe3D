@@ -91,10 +91,15 @@ public class NewGamePanel : UiPanel {
     private Button ConfigureButton(string buttonName, Action<Button> clickAction) {
         var button = uiDocument.rootVisualElement.Q<Button>(buttonName);
 
-        button.RegisterCallback<ClickEvent>(evt => clickAction(button));
+        button.RegisterCallback<ClickEvent>(evt => {
+            clickAction(button);
+            SfxPlayer.PlaySound(SfxPlayer.Sound.UI_BUTTON_CLICK);
+        });
 
         button.RegisterCallback<PointerDownEvent>(e => button.AddToClassList("pressed"), TrickleDown.TrickleDown);
         button.RegisterCallback<PointerUpEvent>(e => button.RemoveFromClassList("pressed"));
+
+        button.RegisterCallback<PointerEnterEvent>(e => SfxPlayer.PlaySound(SfxPlayer.Sound.UI_BUTTON_HOVER));
 
         return button;
     }

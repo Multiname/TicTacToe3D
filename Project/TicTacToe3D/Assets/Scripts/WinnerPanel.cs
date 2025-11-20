@@ -19,7 +19,10 @@ public class WinnerPanel : UiPanel {
         crossWinner = uiDocument.rootVisualElement.Q<VisualElement>("CrossWinner");
 
         restartButton = uiDocument.rootVisualElement.Q<Button>("RestartButton");
-        restartButton.RegisterCallback<ClickEvent>(evt => panelsManager.GoBackToMainMenuFromWinnerPanel());
+        restartButton.RegisterCallback<ClickEvent>(evt => {
+            panelsManager.GoBackToMainMenuFromWinnerPanel();
+            SfxPlayer.PlaySound(SfxPlayer.Sound.UI_BUTTON_CLICK);
+        });
 
         restartButton.RegisterCallback<PointerDownEvent>(e => restartButton.AddToClassList("pressed"), TrickleDown.TrickleDown);
         restartButton.RegisterCallback<PointerUpEvent>(e => restartButton.RemoveFromClassList("pressed"));
@@ -27,6 +30,7 @@ public class WinnerPanel : UiPanel {
         restartButton.RegisterCallback<PointerEnterEvent>(e => {
             if (enabledVisibilityFrameCount != Time.frameCount) {
                 restartButton.AddToClassList("hover");
+                SfxPlayer.PlaySound(SfxPlayer.Sound.UI_BUTTON_HOVER);
             }
         });
         restartButton.RegisterCallback<PointerOutEvent>(e => restartButton.RemoveFromClassList("hover"));

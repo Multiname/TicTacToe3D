@@ -16,7 +16,10 @@ public class MenuButton : MonoBehaviour {
         button = GetComponent<Button>();
         image = GetComponent<Image>();
 
-        button.onClick.AddListener(() => handleClick());
+        button.onClick.AddListener(() => {
+            handleClick();
+            SfxPlayer.PlaySound(SfxPlayer.Sound.UI_BUTTON_CLICK);
+        });
     }
 
     public void SetShowMenuSprite() {

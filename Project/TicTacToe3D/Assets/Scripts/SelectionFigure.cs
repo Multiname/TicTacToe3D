@@ -94,6 +94,10 @@ public class SelectionFigure : MonoBehaviour {
 
             attachedFigureSide = figureSide;
             Coordinates = newCoordinates;
+
+            if (ReadyToPlace) {
+                SfxPlayer.PlaySound(SfxPlayer.Sound.MOVE_SELECTION_FIGURE);
+            }
         }
     }
 
@@ -113,6 +117,7 @@ public class SelectionFigure : MonoBehaviour {
     public void ConfirmSelection() {
         if (ReadyToPlace && body.activeSelf) {
             board.PlaceFigure(Coordinates);
+            SfxPlayer.PlaySound(SfxPlayer.Sound.PLACE_FIGURE);
             if (board.CheckFigureOn(Coordinates)) {
                 Detach();
             }

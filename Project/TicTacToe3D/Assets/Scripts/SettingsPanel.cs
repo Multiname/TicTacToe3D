@@ -8,7 +8,7 @@ public class SettingsPanel : UiPanel {
     protected override void Awake() {
         base.Awake();
 
-        ConfigureSlider("VolumeSlider", gameSettings.volume, value => gameSettings.volume = value);
+        ConfigureSlider("VolumeSlider", GameSettings.volume, value => GameSettings.volume = value);
         ConfigureSlider("SensitivitySlider", gameSettings.sensitivity, value => gameSettings.sensitivity = value);
         ConfigureSlider("EffectsSpeedSlider", gameSettings.EffectsSpeed, value => gameSettings.EffectsSpeed = value);
     }
