@@ -13,7 +13,6 @@ public class GameManager : MonoBehaviour {
 
     [SerializeField] GameSettings gameSettings;
     [SerializeField] PanelsManager panelsManager;
-    [SerializeField] SelectionFigure selectionFigure;
 
     public static event Action<Figure.FigureType> OnStartNextTurnEvent;
 

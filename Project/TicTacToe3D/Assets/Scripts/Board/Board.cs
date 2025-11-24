@@ -198,75 +198,6 @@ public class Board : MonoBehaviour {
     private bool playerBlewLine = false;
     private int comboCount = 1;
 
-    private void LogPlacedFigures() {
-        var log = "placedFigures [ ";
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                if (placedFigures[i, j, 0] == null) {
-                    log += "_ ";
-                } else if (placedFigures[i, j, 0].Type == Figure.FigureType.SPHERE) {
-                    log += "O ";
-                } else {
-                    log += "X ";
-                }
-            }
-            log += "| ";
-        }
-        log += "]";
-        Debug.Log(log);
-    }
-
-    private void LogPlacingState() {
-        var log = "placingState O [ ";
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                if (placingState[0][i, j, 0] == false) {
-                    log += "_ ";
-                } else {
-                    log += "O ";
-                }
-            }
-            log += "| ";
-        }
-        log += "]";
-        Debug.Log(log);
- 
-        log = "placingState X [ ";
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                if (placingState[1][i, j, 0] == false) {
-                    log += "_ ";
-                } else {
-                    log += "X ";
-                }
-            }
-            log += "| ";
-        }
-        log += "]";
-        Debug.Log(log);
-    }
-
-    private void LogCellsHeight() {
-        var log = "cellsHeight [ ";
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                log += cellsHeight[i, j] + " ";
-            }
-            log += "| ";
-        }
-        log += "]";
-        Debug.Log(log);
-    }
-
-    private void LogFiguresToFall() {
-        var log = "figuresToFall [ ";
-        foreach (var (figure, height) in figuresToFall) {
-            log += $"{figure.coordinates.coordinates.x} {figure.coordinates.coordinates.z} {figure.coordinates.coordinates.y} {height} | ";
-        }
-        log += "]";
-        Debug.Log(log);
-    }
-
     private void Start() {
         ResetDetectedLines();
 
@@ -590,7 +521,6 @@ public class Board : MonoBehaviour {
         figureSidesBuilder.BuildSides(figure.transform, figure.coordinates);
 
         int currentCellHeight = cellsHeight[coordinates.x, coordinates.z]++;
-        LogCellsHeight();
         if (currentCellHeight == 0) {
             CellsShadows.ShowShadow(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z, figure.Type);
         }
@@ -623,7 +553,6 @@ public class Board : MonoBehaviour {
         }
 
         MarkFiguresToFall(figuresToBlowList);
-        LogFiguresToFall();
 
         await BlowFigures(figuresToBlowList);
         DropFigures();
@@ -683,7 +612,6 @@ public class Board : MonoBehaviour {
 
         foreach (var figure in figuresToBlowCollection) {
             int newHeight = --cellsHeight[figure.coordinates.coordinates.x, figure.coordinates.coordinates.z];
-            LogCellsHeight();
 
             if (newHeight == 0) {
                 CellsShadows.HideShadow(figure.coordinates.coordinates.x, figure.coordinates.coordinates.z);
@@ -784,18 +712,12 @@ public class Board : MonoBehaviour {
 
         placedFigures[x, z, y] = figure;
         placingState[(int)figure.Type][x, z, y] = true;
-
-        LogPlacedFigures();
-        LogPlacingState();
     }
 
     private void RemoveFigureFromMatrices(int x, int z, int y) {
         var type = placedFigures[x, z, y].Type;
         placedFigures[x, z, y] = null;
         placingState[(int)type][x, z, y] = false;
-
-        LogPlacedFigures();
-        LogPlacingState();
     }
 
     private int GetCurrentMaxHeight() {
