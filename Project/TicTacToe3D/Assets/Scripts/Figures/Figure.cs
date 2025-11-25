@@ -3,6 +3,8 @@ using System.Collections;
 using UnityEngine;
 
 public class Figure : MonoBehaviour {
+    private const float FALL_ACCELERATION = 9.8f;
+
     public const int NUMBER_OF_FIGURE_TYPES = 2;
     public enum FigureType {
         SPHERE,
@@ -54,10 +56,10 @@ public class Figure : MonoBehaviour {
 
     private IEnumerator Fall(int y, Action callback, bool playFallVfx) {
         float speed = 0.0f;
-        float acceleration = 0.03f;
         while (transform.position.y > y) {
-            transform.position += speed * Time.deltaTime * Vector3.down;
-            speed += acceleration;
+            float newSpeed = speed += FALL_ACCELERATION * Time.deltaTime;
+            transform.position += 0.5f * (speed + newSpeed) * Time.deltaTime * Vector3.down;
+            speed = newSpeed;
             yield return null;
         }
         StopFalling(callback, playFallVfx);

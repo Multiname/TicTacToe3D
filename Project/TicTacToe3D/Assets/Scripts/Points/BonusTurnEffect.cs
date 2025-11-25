@@ -25,6 +25,8 @@ public class BonusTurnEffect : MonoBehaviour {
     }
 
     public async UniTask StartEffect(Figure.FigureType figureType) {
+        SfxPlayer.PlaySound(SfxPlayer.Sound.BONUS_TURN);
+
         bonusTurnIcon.sprite = bonusTurnSprites[(int)figureType];
 
         var anchorMin = bonusTurnArea.anchorMin;

@@ -21,6 +21,8 @@ public class SfxPlayer : MonoBehaviour {
     [SerializeField, Range(0, 1)] float switchVisibilityOfPointsEffectBaseVolume = 1.0f;
     [SerializeField] AudioSource getBonusAudioSource;
     [SerializeField, Range(0, 1)] float getBonusBaseVolume = 1.0f;
+    [SerializeField] AudioSource bonusTurnAudioSource;
+    [SerializeField, Range(0, 1)] float bonusTurnBaseVolume = 1.0f;
 
     [SerializeField] AudioSource uiButtonHoverAudioSource;
     [SerializeField, Range(0, 1)] float uiButtonHoverBaseVolume = 1.0f;
@@ -29,7 +31,7 @@ public class SfxPlayer : MonoBehaviour {
 
     private static AudioSource[] audioSources;
     private static float[] baseVolumes;
-    private const int NUMBER_OF_SOUNDS = 11;
+    private const int NUMBER_OF_SOUNDS = 12;
     public enum Sound {
         GAME_START,
         GAME_END,
@@ -40,6 +42,7 @@ public class SfxPlayer : MonoBehaviour {
         DESTROY_FIGURE,
         SWITCH_VISIBILITY_OF_POINTS_EFFECT,
         GET_BONUS,
+        BONUS_TURN,
         UI_BUTTON_HOVER,
         UI_BUTTON_CLICK
     }
@@ -76,6 +79,9 @@ public class SfxPlayer : MonoBehaviour {
 
         audioSources[(int)Sound.GET_BONUS] = getBonusAudioSource;
         baseVolumes[(int)Sound.GET_BONUS] = getBonusBaseVolume;
+
+        audioSources[(int)Sound.BONUS_TURN] = bonusTurnAudioSource;
+        baseVolumes[(int)Sound.BONUS_TURN] = bonusTurnBaseVolume;
 
 
         audioSources[(int)Sound.UI_BUTTON_HOVER] = uiButtonHoverAudioSource;
