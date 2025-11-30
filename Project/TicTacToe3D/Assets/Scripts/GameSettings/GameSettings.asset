@@ -15,6 +15,4 @@ MonoBehaviour:
   <MaxWinPointsValue>k__BackingField: 99
   winPoints: 10
   enabledInterceptionRule: 0
-  volume: 1
   sensitivity: 1
-  effectsSpeed: 1
