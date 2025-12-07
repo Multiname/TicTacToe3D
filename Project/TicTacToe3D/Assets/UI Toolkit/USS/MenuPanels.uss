@@ -22,8 +22,8 @@
     color: rgb(214, 40, 40);
     -unity-font-definition: url("project://database/Assets/UI/Fonts/TDAText.ttf?fileID=12800000&guid=51943b9d222c3114c9b2b7d68d9750b7&type=3#TDAText");
     -unity-text-align: middle-center;
-    font-size: 500%;
-    margin-top: 7%;
+    font-size: 550%;
+    margin-top: 9%;
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
@@ -40,8 +40,8 @@
     color: rgb(240, 239, 244);
     -unity-font-definition: url("project://database/Assets/UI/Fonts/TDAText.ttf?fileID=12800000&guid=51943b9d222c3114c9b2b7d68d9750b7&type=3#TDAText");
     -unity-text-align: middle-center;
-    font-size: 500%;
-    margin-top: 7%;
+    font-size: 550%;
+    margin-top: 9%;
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
@@ -58,8 +58,8 @@
     color: rgb(240, 239, 244);
     -unity-font-definition: url("project://database/Assets/UI/Fonts/TDAText.ttf?fileID=12800000&guid=51943b9d222c3114c9b2b7d68d9750b7&type=3#TDAText");
     -unity-text-align: middle-center;
-    font-size: 500%;
-    margin-top: 7%;
+    font-size: 550%;
+    margin-top: 9%;
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
